@@ -12,12 +12,12 @@ export class UserController {
   }
 
   @Get(':id') // Rota para obter um usuário pelo ID
-  async getUser(@Param('id') id: string): Promise<User> {
+  async getUser(@Param('id') id: any): Promise<User> {
     return this.userService.getUserById(id); 
   }
 
   @Delete(':id') // Rota para deletar um usuário pelo ID
-  async deleteUser(@Param('id') id: string): Promise<void> {
+  async deleteUser(@Param('id') id: any): Promise<void> {
     await this.userService.deleteUser(id);
   }
 }
