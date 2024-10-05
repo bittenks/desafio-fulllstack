@@ -1,8 +1,9 @@
 // api/api.ts
 import axios from 'axios';
+import { Alert } from 'react-native';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000', // Substitua pelo URL da sua API se não estiver em localhost
+  baseURL: 'https://desafio-fulllstack.onrender.com', // Substitua pelo URL da sua API se não estiver em localhost
 });
 
 interface RegisterData {
@@ -23,6 +24,13 @@ interface Task {
 }
 
 export const registerUser = async (data: RegisterData) => {
+  try {
+    Alert.alert('Salvando', 'Aguarde um momento...');
+  } catch (error) {
+    Alert.alert('Erro', 'ocorreu um erro , tente novamente.');
+    
+  }
+  
   return await api.post('/auth/register', data);
 };
 
