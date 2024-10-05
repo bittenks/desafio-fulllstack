@@ -1,98 +1,124 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
-import { TextInput, Button, Provider as PaperProvider, Title, ActivityIndicator } from 'react-native-paper';
-import { loginUser } from '../api/api';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, FlatList, Text, ActivityIndicator, Button, Alert } from 'react-native';
+import { getTasks } from '../api/api';
 import useAuth from '../hooks/useAuth'; // Importando o hook de autenticação
+import { List } from 'react-native-paper'; // Usando o componente List do react-native-paper
+import Icon from 'react-native-vector-icons/Ionicons'; // Importando ícones
 
-const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false); // Estado de loading
-  const { saveToken } = useAuth(); // Usando o hook de autenticação
+const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true); // Estado de carregamento
+  const { token } = useAuth(); // Obtendo o token do hook
 
-  const handleLogin = async () => {
-    setLoading(true); // Ativando o loading
+  const fetchTasks = async () => {
     try {
-      const response = await loginUser({ username, password });
-      await saveToken(response.token); // Armazena o token recebido
-      navigation.navigate('TaskList');
+      const response = await getTasks(token || '');
+      setTasks(response.data);
     } catch (error) {
-      Alert.alert('Erro', 'Usuário ou senha inválidos.');
+      console.error(error);
     } finally {
-      setLoading(false); // Desativando o loading
+      setLoading(false); // Desativando o loading após a requisição
     }
   };
 
-  return (
-    <PaperProvider>
-      <View style={styles.container}>
-        <Title style={styles.title}>Login</Title>
-        <TextInput
-          label="Usuário"
-          value={username}
-          onChangeText={setUsername}
-          style={styles.input}
-          mode="outlined"
-          theme={inputTheme}
-        />
-        <TextInput
-          label="Senha"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          style={styles.input}
-          mode="outlined"
-          theme={inputTheme}
-        />
-        <Button
-          mode="contained"
-          onPress={handleLogin}
-          style={styles.button}
-          disabled={loading} // Desabilita o botão enquanto está carregando
-        >
-          {loading ? <ActivityIndicator color="#ffffff" /> : 'Login'}
-        </Button>
-        <Button mode="text" onPress={() => navigation.navigate('Register')} style={styles.registerButton}>
-          Registrar
-        </Button>
-      </View>
-    </PaperProvider>
-  );
-}
+  useEffect(() => {
+    fetchTasks();
+  }, [token]);
 
-// Estilização
+  const renderStatusIcon = (status: string) => {
+    switch (status) {
+      case 'Não Iniciada':
+        return <Icon name="hourglass-outline" size={24} color="orange" />;
+      case 'Em Andamento':
+        return <Icon name="play-outline" size={24} color="blue" />;
+      case 'Concluída':
+        return <Icon name="checkmark-circle-outline" size={24} color="green" />;
+      default:
+        return null;
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#6200ee" />
+        <Text>Carregando tarefas...</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      {tasks.length === 0 ? (
+        <Text style={styles.emptyMessage}>Nenhuma tarefa ainda. Crie uma!</Text>
+      ) : (
+        <FlatList
+          data={tasks}
+          renderItem={({ item }) => (
+            <List.Item
+              title={item.descricao}
+              description={
+                <Text style={styles.descriptionText}>
+                  {`Responsável: ${item.responsavel}`}
+                </Text>
+              }
+              onPress={() => navigation.navigate('TaskDetail', { taskId: item.id })} // Navegar para a tela de detalhes da tarefa
+              style={styles.listItem}
+              right={() => (
+                <View style={styles.statusContainer}>
+                  {renderStatusIcon(item.status)}
+                  <Text style={styles.statusText}>{item.status}</Text>
+                  <Button
+                    title="Editar"
+                    onPress={() => navigation.navigate('TaskDetail', { taskId: item.id })} // Navegar para a tela de detalhes da tarefa ao clicar em Editar
+                    disabled={item.status === 'Concluída'} // Desabilitar se o status for concluído
+                  />
+                </View>
+              )}
+            />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      )}
+      <Button title="Criar Tarefa" onPress={() => navigation.navigate('TaskForm')} />
+    </View>
+  );
+};
+
+// Estilos
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     padding: 16,
     backgroundColor: '#f5f5f5', // Cor de fundo suave
   },
-  title: {
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyMessage: {
     textAlign: 'center',
-    marginBottom: 24,
-    fontSize: 24,
-    color: '#6200ee', // Cor do título
+    marginVertical: 20,
+    fontSize: 18,
+    color: '#888',
   },
-  input: {
-    marginBottom: 12,
+  descriptionText: {
+    fontSize: 14,
+    color: '#666',
   },
-  button: {
-    marginBottom: 12,
+  listItem: {
+    marginBottom: 8,
+    backgroundColor: '#ffffff', // Fundo branco para cada item
+    borderRadius: 4,
   },
-  registerButton: {
-    alignSelf: 'center', // Centraliza o botão de registro
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statusText: {
+    marginHorizontal: 8,
   },
 });
 
-// Tema para os inputs
-const inputTheme = {
-  colors: {
-    primary: '#6200ee', // Cor primária
-    placeholder: '#6200ee', // Cor do placeholder
-    text: '#000', // Cor do texto
-    error: '#B00020', // Cor do erro
-  },
-};
-
-export default LoginScreen;
+export default TaskListScreen;

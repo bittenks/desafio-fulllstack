@@ -1,27 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Alert, TextInput } from 'react-native';
 import { Text, Button, Card, Provider as PaperProvider } from 'react-native-paper';
-import { getTaskById } from '../api/api';
+import { Picker } from '@react-native-picker/picker'; // Importando o Picker aqui
+import { getTaskById, updateTask } from '../api/api';
+import useAuth from '../hooks/useAuth';
 
 const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, navigation }) => {
   const { taskId } = route.params;
   const [task, setTask] = useState<any>(null);
-  const token = 'seu_token_aqui'; 
+  const [loading, setLoading] = useState<boolean>(true);
+  const [responsavel, setResponsavel] = useState<string>(''); // Para o responsável
+  const [status, setStatus] = useState<string>(''); // Para o status
+  const { token } = useAuth(); 
 
   const fetchTaskDetails = async () => {
     try {
-      const response = await getTaskById(taskId, token);
+      const response = await getTaskById(taskId, token || '');
       setTask(response);
+      setResponsavel(response.responsavel);
+      setStatus(response.status);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateTask = async () => {
+    try {
+      await updateTask(taskId, { ...task, responsavel, status }, token);
+      Alert.alert('Sucesso', 'Tarefa atualizada com sucesso!');
+      fetchTaskDetails(); // Atualiza os detalhes da tarefa após a atualização
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erro', 'Falha ao atualizar a tarefa.');
     }
   };
 
   useEffect(() => {
     fetchTaskDetails();
-  }, []);
+  }, [token]);
 
-  if (!task) {
+  if (loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#6200ee" />
@@ -40,11 +60,31 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
           <Card.Content>
             <Text style={styles.title}>Detalhes da Tarefa</Text>
             <Text style={styles.label}>Descrição:</Text>
-            <Text style={styles.text}>{task.descricao}</Text>
+            <Text style={styles.text}>{task?.descricao}</Text>
+
+            {/* Campo para editar o responsável */}
             <Text style={styles.label}>Responsável:</Text>
-            <Text style={styles.text}>{task.responsavel}</Text>
+            <TextInput
+              style={styles.input}
+              value={responsavel}
+              onChangeText={setResponsavel}
+            />
+
+            {/* Seletor para editar o status */}
             <Text style={styles.label}>Status:</Text>
-            <Text style={styles.text}>{task.status}</Text>
+            <Picker
+              selectedValue={status}
+              style={styles.picker}
+              onValueChange={(itemValue) => setStatus(itemValue)}
+            >
+              <Picker.Item label="Não Iniciada" value="Não Iniciada" />
+              <Picker.Item label="Em Andamento" value="Em Andamento" />
+              <Picker.Item label="Concluída" value="Concluída" />
+            </Picker>
+
+            <Button mode="contained" onPress={handleUpdateTask} style={styles.updateButton}>
+              Atualizar Tarefa
+            </Button>
           </Card.Content>
         </Card>
       </View>
@@ -89,6 +129,20 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     marginBottom: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    padding: 10,
+    marginBottom: 12,
+  },
+  picker: {
+    height: 50,
+    width: '100%',
+  },
+  updateButton: {
+    marginTop: 12,
   },
 });
 

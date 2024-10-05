@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Alert } from 'react-native';
 
 const api = axios.create({
-  baseURL: 'https://desafio-fulllstack.onrender.com', 
+  baseURL: 'https://desafio-fulllstack.onrender.com',
 });
 
 interface RegisterData {
@@ -31,28 +31,28 @@ export const registerUser = async (data: RegisterData) => {
     return response.data;
   } catch (error) {
     Alert.alert('Erro', 'Ocorreu um erro ao registrar. Tente novamente.');
-    throw error; 
+    throw error;
   }
 };
 
 export const loginUser = async (data: LoginData) => {
   try {
     const response = await api.post('/auth/login', data);
-    return response.data; 
+    return response.data;
   } catch (error) {
     Alert.alert('Erro', 'Ocorreu um erro ao fazer login. Verifique suas credenciais.');
-    throw error; 
+    throw error;
   }
 };
 
 export const getTasks = async (token: string) => {
   try {
-    const response = await api.get<Task[]>('/tasks', {
+    const response = await api.get<any[]>('/tasks', {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return response.data; 
+    return response;
   } catch (error) {
-    Alert.alert('Erro', 'Falha ao carregar tarefas.');
+    // Alert.alert('Erro', 'Falha ao carregar tarefas.');
     throw error;
   }
 };
@@ -62,19 +62,19 @@ export const createTask = async (data: Omit<Task, 'id'>, token: string) => {
     const response = await api.post('/tasks', data, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return response.data; 
+    return response.data;
   } catch (error) {
     Alert.alert('Erro', 'Falha ao criar tarefa.');
     throw error;
   }
 };
 
-export const updateTask = async (id: number, data: Omit<Task, 'id'>, token: string) => {
+export const updateTask = async (id: number, data: Omit<Task, 'id'>, token: any) => {
   try {
     const response = await api.patch(`/tasks/${id}`, data, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return response.data; 
+    return response.data;
   } catch (error) {
     Alert.alert('Erro', 'Falha ao atualizar tarefa.');
     throw error;

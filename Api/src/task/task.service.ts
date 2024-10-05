@@ -15,9 +15,9 @@ export class TaskService {
   async createTask(descricao: string, usuario: User, responsavel: string): Promise<Task> {
     const task = this.taskRepository.create({
       descricao,
-      status: 'pendente', // Atribui status padrão como "pendente"
+      status: 'Não iniciada', // Atribui status padrão como "Não iniciada"
       usuario,
-      responsavel, // Responsável pela tarefa
+      responsavel, 
     });
 
     return this.taskRepository.save(task); // Salva a nova tarefa no banco de dados
