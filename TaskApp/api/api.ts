@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Alert } from 'react-native';
 
 const api = axios.create({
-  baseURL: 'https://desafio-fulllstack.onrender.com', // Substitua pelo URL da sua API se não estiver em localhost
+  baseURL: 'https://desafio-fulllstack.onrender.com', 
 });
 
 interface RegisterData {

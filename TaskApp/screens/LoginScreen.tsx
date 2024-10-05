@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Alert } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
+import { TextInput, Button, Provider as PaperProvider } from 'react-native-paper';
 import { loginUser } from '../api/api';
 
 const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
@@ -16,13 +17,47 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   };
 
   return (
-    <View>
-      <TextInput placeholder="Usuário" value={username} onChangeText={setUsername} />
-      <TextInput placeholder="Senha" secureTextEntry value={password} onChangeText={setPassword} />
-      <Button title="Login" onPress={handleLogin} />
-      <Button title="Registrar" onPress={() => navigation.navigate('Register')} />
-    </View>
+    <PaperProvider>
+      <View style={styles.container}>
+        <TextInput
+          label="Usuário"
+          value={username}
+          onChangeText={setUsername}
+          style={styles.input}
+          mode="outlined"
+        />
+        <TextInput
+          label="Senha"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          style={styles.input}
+          mode="outlined"
+        />
+        <Button mode="contained" onPress={handleLogin} style={styles.button}>
+          Login
+        </Button>
+        <Button mode="text" onPress={() => navigation.navigate('Register')}>
+          Registrar
+        </Button>
+      </View>
+    </PaperProvider>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 16,
+    backgroundColor: '#f5f5f5', // Cor de fundo suave
+  },
+  input: {
+    marginBottom: 12,
+  },
+  button: {
+    marginBottom: 12,
+  },
+});
 
 export default LoginScreen;
