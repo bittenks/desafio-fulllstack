@@ -16,10 +16,10 @@ const AppNavigator: React.FC = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="TaskList" component={TaskListScreen} />
-        <Stack.Screen name="TaskDetail" component={TaskDetailScreen} />
-        <Stack.Screen name="TaskForm" component={TaskFormScreen} />
+        <Stack.Screen name="Cadastro" component={RegisterScreen} />
+        <Stack.Screen name="Lista de Tarefas" component={TaskListScreen} />
+        <Stack.Screen name="Detalhes da tarefa" component={TaskDetailScreen} />
+        <Stack.Screen name="Criar Tarefa" component={TaskFormScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

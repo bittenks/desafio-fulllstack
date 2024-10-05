@@ -14,7 +14,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     try {
       const data = await loginUser({ username, password });
       await saveToken(data.access_token); // Armazena o token retornado
-      navigation.navigate('TaskList');
+      navigation.navigate('Lista de Tarefas');
     } catch (error) {
       Alert.alert('Erro', 'Usuário ou senha inválidos.');
     } finally {
@@ -51,7 +51,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         >
           {loading ? <ActivityIndicator color="#ffffff" /> : 'Login'}
         </Button>
-        <Button mode="text" onPress={() => navigation.navigate('Register')} style={styles.registerButton}>
+        <Button mode="text" textColor='#044c78' onPress={() => navigation.navigate('Cadastro')} style={styles.registerButton}>
           Registrar
         </Button>
       </View>
@@ -64,29 +64,31 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#f5f5f5', // Cor de fundo suave
+    backgroundColor: '#f5f5f5', 
   },
   title: {
     textAlign: 'center',
     marginBottom: 24,
     fontSize: 24,
-    color: '#6200ee', // Cor do título
+    color: '#044c78', // Cor do título
   },
   input: {
     marginBottom: 12,
   },
   button: {
     marginBottom: 12,
+    backgroundColor:"#04c074"
   },
   registerButton: {
-    alignSelf: 'center', // Centraliza o botão de registro
+    color:"#044c78",
+    alignSelf: 'center', 
   },
 });
 
 // Tema para os inputs
 const inputTheme = {
   colors: {
-    primary: '#6200ee', // Cor primária
+    primary: '#044c78', // Cor primária
     placeholder: '#6200ee', // Cor do placeholder
     text: '#000', // Cor do texto
     error: '#B00020', // Cor do erro

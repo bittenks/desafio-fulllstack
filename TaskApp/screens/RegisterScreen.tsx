@@ -43,7 +43,7 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         <Button mode="contained" onPress={handleRegister} style={styles.button}>
           Registrar
         </Button>
-        <Button mode="text" onPress={() => navigation.navigate('Login')}>
+        <Button mode="text" textColor='#044c78' onPress={() => navigation.navigate('Login')}>
           Já tem uma conta? Faça login
         </Button>
       </View>
@@ -56,18 +56,34 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#f5f5f5', // Cor de fundo suave
+    backgroundColor: '#f5f5f5', 
   },
   title: {
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
+    fontSize: 24,
+    color: '#044c78', // Cor do título
   },
   input: {
     marginBottom: 12,
   },
   button: {
     marginBottom: 12,
+    backgroundColor:"#04c074"
+  },
+  registerButton: {
+    color:"#044c78",
+    alignSelf: 'center', 
   },
 });
 
+// Tema para os inputs
+const inputTheme = {
+  colors: {
+    primary: '#044c78', // Cor primária
+    placeholder: '#6200ee', // Cor do placeholder
+    text: '#000', // Cor do texto
+    error: '#B00020', // Cor do erro
+  },
+};
 export default RegisterScreen;

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList, Text, ActivityIndicator, Button, Alert } from 'react-native';
-import { getTasks } from '../api/api';
+import { View, StyleSheet, FlatList, Text, ActivityIndicator, Alert } from 'react-native';
+import { getTasks, updateTask } from '../api/api';
 import useAuth from '../hooks/useAuth'; // Importando o hook de autenticação
-import { List } from 'react-native-paper'; // Usando o componente List do react-native-paper
-import Icon from 'react-native-vector-icons/Ionicons'; // Importando ícones
+import { Button, Divider } from 'react-native-paper'; // Usando o componente Button do react-native-paper
+import { Picker } from '@react-native-picker/picker'; // Picker para seleção de status
+import { AlertCircle, CheckCircle, Clock, EditIcon, PlusSquare, User } from 'lucide-react-native';
 
 const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -12,8 +13,10 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   const fetchTasks = async () => {
     try {
-      const response = await getTasks(token || '');
-      setTasks(response.data);
+      if (token) {
+        const response = await getTasks(token);
+        setTasks(response.data);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -28,20 +31,29 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const renderStatusIcon = (status: string) => {
     switch (status) {
       case 'Não Iniciada':
-        return <Icon name="hourglass-outline" size={24} color="orange" />;
+        return <AlertCircle size={24} color="orange" />;
       case 'Em Andamento':
-        return <Icon name="play-outline" size={24} color="blue" />;
+        return <Clock size={24} color="blue" />;
       case 'Concluída':
-        return <Icon name="checkmark-circle-outline" size={24} color="green" />;
+        return <CheckCircle size={24} color="green" />;
       default:
         return null;
+    }
+  };
+
+  const handleUpdateStatus = async (itemId: number, newStatus: string) => {
+    try {
+      await updateTask(itemId, { status: newStatus }, token);
+      fetchTasks(); // Atualiza a lista após a edição
+    } catch (error) {
+      Alert.alert('Erro', 'Falha ao atualizar status da tarefa.');
     }
   };
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6200ee" />
+        <ActivityIndicator size="large" color="#044c78" />
         <Text>Carregando tarefas...</Text>
       </View>
     );
@@ -49,38 +61,63 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Button
+        mode="contained"
+        onPress={fetchTasks}
+        style={styles.refreshButton}
+        icon="refresh" 
+      >
+        Atualizar
+      </Button>
       {tasks.length === 0 ? (
         <Text style={styles.emptyMessage}>Nenhuma tarefa ainda. Crie uma!</Text>
       ) : (
         <FlatList
           data={tasks}
           renderItem={({ item }) => (
-            <List.Item
-              title={item.descricao}
-              description={
-                <Text style={styles.descriptionText}>
-                  {`Responsável: ${item.responsavel}`}
-                </Text>
-              }
-              onPress={() => navigation.navigate('TaskDetail', { taskId: item.id })} // Navegar para a tela de detalhes da tarefa
-              style={styles.listItem}
-              right={() => (
-                <View style={styles.statusContainer}>
-                  {renderStatusIcon(item.status)}
-                  <Text style={styles.statusText}>{item.status}</Text>
-                  <Button
-                    title="Editar"
-                    onPress={() => navigation.navigate('TaskDetail', { taskId: item.id })} // Navegar para a tela de detalhes da tarefa ao clicar em Editar
-                    disabled={item.status === 'Concluída'} // Desabilitar se o status for concluído
-                  />
+            <View style={styles.listItem}>
+              <View style={styles.itemContainer}>
+                {renderStatusIcon(item.status)}
+                <View style={styles.textContainer}>
+                  <Text style={styles.titleText}>{item.descricao}</Text>
+                  <Text style={styles.descriptionText}><User color={'black'} size={2}/>{` ${item.responsavel}`}</Text>
                 </View>
-              )}
-            />
+                <Button
+                  mode="text" // Definindo o modo do botão
+                  onPress={() => navigation.navigate('Detalhes da tarefa', { taskId: item.id })}
+                  disabled={item.status === 'Concluída'}
+                  style={styles.editButton}
+                >
+                  <EditIcon size={20} color="#044c78" /> {/* Definindo o tamanho e a cor do ícone */}
+                </Button>
+              </View>
+              <View style={styles.statusContainer}>
+                <Picker
+                  selectedValue={item.status}
+                  style={styles.picker}
+                  onValueChange={(itemValue) => handleUpdateStatus(item.id, itemValue)}
+                >
+                  <Picker.Item label="Não Iniciada" value="Não Iniciada" />
+                  <Picker.Item label="Em Andamento" value="Em Andamento" />
+                  <Picker.Item label="Concluída" value="Concluída" />
+                </Picker>
+              </View>
+              <Divider />
+            </View>
           )}
           keyExtractor={(item) => item.id.toString()}
         />
       )}
-      <Button title="Criar Tarefa" onPress={() => navigation.navigate('TaskForm')} />
+      <Button
+        mode="contained"
+        onPress={() => navigation.navigate('Criar Tarefa')}
+        disabled={loading}
+        style={styles.createTaskButton}
+        icon={'plus-box-outline'}
+      >
+    
+        {loading ? <ActivityIndicator color="#ffffff" /> : 'Criar Tarefa'}
+      </Button>
     </View>
   );
 };
@@ -97,6 +134,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  titleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   emptyMessage: {
     textAlign: 'center',
     marginVertical: 20,
@@ -108,16 +149,46 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   listItem: {
-    marginBottom: 8,
     backgroundColor: '#ffffff', // Fundo branco para cada item
     borderRadius: 4,
+    marginBottom: 8,
+    padding: 10,
+    elevation: 1, // Sombra leve
   },
   statusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between', // Espaçamento entre o picker e o botão
+    marginTop: 8,
   },
-  statusText: {
-    marginHorizontal: 8,
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between', // Espalhar os itens para ocupar o espaço disponível
+  },
+  textContainer: {
+    flex: 1,
+    paddingHorizontal: 8,
+  },
+  picker: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  editButton: {
+    width: 70, // Definindo uma largura fixa para o botão
+    marginLeft: 10, // Espaçamento entre o texto e o botão
+  },
+  refreshButton: {
+    backgroundColor: "#044c78",
+    marginBottom: 14,
+    marginLeft:12,
+    marginRight:12,
+
+    width:"auto"
+  },
+  createTaskButton: {
+    backgroundColor: "#00be78",
+    marginTop: 16,
   },
 });
 

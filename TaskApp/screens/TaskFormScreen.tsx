@@ -20,7 +20,7 @@ const TaskFormScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       await createTask({ descricao, responsavel, status: 'Não iniciada' }, token); 
       setSnackbarVisible(true); // Mostra o Snackbar ao criar a tarefa
       setTimeout(() => {
-        navigation.navigate('TaskList'); // Navega após um tempo
+        navigation.navigate('Lista de Tarefas'); // Navega após um tempo
       }, 1000);
     } catch (error) {
       Alert.alert('Erro', 'Falha ao criar tarefa.');
@@ -52,6 +52,7 @@ const TaskFormScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         mode="contained" 
         onPress={handleCreateTask} 
         style={styles.button}
+        icon={'plus-box-outline'}
       >
         Criar Tarefa
       </Button>
@@ -72,26 +73,34 @@ const TaskFormScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   );
 };
 
-// Estilos
+// Estilização
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     padding: 16,
-    backgroundColor: '#f5f5f5', // Cor de fundo suave
-  },
-  input: {
-    marginBottom: 12,
-  },
-  button: {
-    marginTop: 12,
+    backgroundColor: '#f5f5f5', 
   },
   title: {
     textAlign: 'center',
     marginBottom: 24,
     fontSize: 24,
-    color: '#6200ee', // Cor do título
+    color: '#044c78', // Cor do título
+  },
+  input: {
+    marginBottom: 12,
+  },
+  button: {
+    marginBottom: 12,
+    backgroundColor:"#04c074"
+  },
+  registerButton: {
+    color:"#044c78",
+    alignSelf: 'center', 
   },
 });
+
+
+
 
 export default TaskFormScreen;

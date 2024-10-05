@@ -11,20 +11,22 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
   const [loading, setLoading] = useState<boolean>(true);
   const [responsavel, setResponsavel] = useState<string>(''); // Para o responsável
   const [status, setStatus] = useState<string>(''); // Para o status
-  const { token } = useAuth(); 
+  const { token } = useAuth();
 
   const fetchTaskDetails = async () => {
-    try {
-      const response = await getTaskById(taskId, token || '');
-      setTask(response);
-      setResponsavel(response.responsavel);
-      setStatus(response.status);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    if (token) {
+      try {
+        const response = await getTaskById(taskId, token);
+        setTask(response);
+        setResponsavel(response.responsavel);
+        setStatus(response.status);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  }
 
   const handleUpdateTask = async () => {
     try {
@@ -33,7 +35,7 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
       fetchTaskDetails(); // Atualiza os detalhes da tarefa após a atualização
     } catch (error) {
       console.error(error);
-      Alert.alert('Erro', 'Falha ao atualizar a tarefa.');
+
     }
   };
 
@@ -143,6 +145,7 @@ const styles = StyleSheet.create({
   },
   updateButton: {
     marginTop: 12,
+    backgroundColor:"#04c074"
   },
 });
 
