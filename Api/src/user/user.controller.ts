@@ -1,19 +1,19 @@
 import { Controller, Get, Param, Delete, NotFoundException } from '@nestjs/common';
-import { UserService } from './user.service'; // Ajuste o caminho conforme necessário
-import { User } from './user.entity'; // Ajuste o caminho conforme necessário
+import { UserService } from './user.service'; 
+import { User } from './user.entity';
 
-@Controller('users') // Use 'users' como plural para a rota
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get() // Rota para obter todos os usuários
   async getAllUsers(): Promise<User[]> {
-    return this.userService.getAllUsers(); // Chama o método do serviço
+    return this.userService.getAllUsers(); 
   }
 
   @Get(':id') // Rota para obter um usuário pelo ID
-  async getUser(@Param('id') id: number): Promise<User> {
-    return this.userService.getUserById(id); // Chama o método do serviço
+  async getUser(@Param('id') id: string): Promise<User> {
+    return this.userService.getUserById(id); 
   }
 
   @Delete(':id') // Rota para deletar um usuário pelo ID
