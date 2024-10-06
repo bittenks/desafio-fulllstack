@@ -8,15 +8,15 @@ import { AuthGuard } from '@nestjs/passport';
 @Controller('tasks')
 @UseGuards(AuthGuard('jwt')) // Protege todas as rotas com JWT
 export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
+  constructor(private readonly taskService: TaskService) { }
 
   // Rota para criar uma tarefa
   @Post()
   async createTask(
-    @Body() body: { descricao: string; responsavel: string },
+    @Body() body: { descricao: string; responsavel: string, status: string },
     @GetUser() usuario: User,
   ): Promise<Task> {
-    return this.taskService.createTask(body.descricao, usuario, body.responsavel);
+    return this.taskService.createTask(body.descricao, usuario, body.responsavel, body.status);
   }
 
   // Rota para atualizar uma tarefa

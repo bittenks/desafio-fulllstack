@@ -1,0 +1,261 @@
+
+
+/* #root {
+
+  font-family: 'Arimo', Helvetica, Arial, sans-serif;
+  text-align: center;
+
+} */
+
+
+::-webkit-scrollbar-track {
+  width: 10px;
+
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+  width: 10px;
+
+  background-color: #525151;
+  border: 2px solid #555555;
+  border-radius: 20px
+}
+
+
+#Table {
+  zoom: 84%;
+  overflow-x: hidden !important;
+}
+
+header {
+  padding: 0rem !important;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 100%;
+  background-color: white;
+  /* Adicione a cor de fundo desejada */
+  z-index: 40;
+  /* Certifique-se de que o valor do z-index seja maior que o dos outros elementos */
+}
+
+
+.defaultColor {
+  background-color: #3c0f49d2 !important;
+}
+
+.Geral {
+  background-color: rgba(60, 15, 73, 0.822) !important;
+}
+
+.free {
+  background-color: #89D329 !important
+}
+
+.preset0 {
+  background-color: #FF5733 !important
+}
+
+.preset1 {
+  background-color: #FFA500 !important
+}
+
+.preset2 {
+  background-color: #A52A2A !important
+}
+
+.preset3 {
+  background-color: #FFFF00 !important
+}
+
+.preset4 {
+  background-color: #008000 !important
+}
+
+.preset5 {
+  background-color: #008080 !important
+}
+
+.preset6 {
+  background-color: #808000 !important
+}
+
+.preset7 {
+  background-color: #0000FF !important
+}
+
+.preset8 {
+  background-color: #800080 !important
+}
+
+.preset9 {
+  background-color: #DC143C !important
+}
+
+.preset10 {
+  background-color: #4682B4 !important
+}
+
+.preset11 {
+  background-color: #43464B !important
+}
+
+.preset12 {
+  background-color: #808080 !important
+}
+
+.preset13 {
+  background-color: #A9A9A9 !important
+}
+
+.preset14 {
+  background-color: #000000 !important
+}
+
+.preset15 {
+  background-color: #8B0000 !important
+}
+
+.preset16 {
+  background-color: #FF8C00 !important
+}
+
+.preset17 {
+  background-color: #8B4513 !important
+}
+
+.preset18 {
+  background-color: #8B8B00 !important
+}
+
+.preset19 {
+  background-color: #006400 !important
+}
+
+.preset20 {
+  background-color: #008B8B !important
+}
+
+.preset21 {
+  background-color: #556B2F !important
+}
+
+.preset22 {
+  background-color: #00008B !important
+}
+
+.preset23 {
+  background-color: #8A2BE2 !important
+}
+
+.preset24 {
+  background-color: #B22222 !important
+}
+
+.colorpreset0 {
+  color: #FF5733
+}
+
+.colorpreset1 {
+  color: #FFA500
+}
+
+.colorpreset2 {
+  color: #A52A2A
+}
+
+.colorpreset3 {
+  color: #FFFF00
+}
+
+.colorpreset4 {
+  color: #008000
+}
+
+.colorpreset5 {
+  color: #008080
+}
+
+.colorpreset6 {
+  color: #808000
+}
+
+.colorpreset7 {
+  color: #0000FF
+}
+
+.colorpreset8 {
+  color: #800080
+}
+
+.colorpreset9 {
+  color: #DC143C
+}
+
+.colorpreset10 {
+  color: #4682B4
+}
+
+.colorpreset11 {
+  color: #43464B
+}
+
+.colorpreset12 {
+  color: #808080
+}
+
+.colorpreset13 {
+  color: #A9A9A9
+}
+
+.colorpreset14 {
+  color: #000000
+}
+
+.colorpreset15 {
+  color: #8B0000
+}
+
+.colorpreset16 {
+  color: #FF8C00
+}
+
+.colorpreset17 {
+  color: #8B4513
+}
+
+.colorpreset18 {
+  color: #8B8B00
+}
+
+.colorpreset19 {
+  color: #006400
+}
+
+.colorpreset20 {
+  color: #008B8B
+}
+
+.colorpreset21 {
+  color: #556B2F
+}
+
+.colorpreset22 {
+  color: #00008B
+}
+
+.colorpreset23 {
+  color: #8A2BE2
+}
+
+.colorpreset24 {
+  color: #B22222
+}

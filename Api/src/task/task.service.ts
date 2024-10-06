@@ -9,15 +9,15 @@ export class TaskService {
   constructor(
     @InjectRepository(Task)
     private taskRepository: Repository<Task>,
-  ) {}
+  ) { }
 
   // Método para criar uma nova tarefa
-  async createTask(descricao: string, usuario: User, responsavel: string): Promise<Task> {
+  async createTask(descricao: string, usuario: User, responsavel: string, status: string): Promise<Task> {
     const task = this.taskRepository.create({
       descricao,
-      status: 'Não Iniciada', // Atribui status padrão como "Não iniciada"
+      status: status ? status : "Não Iniciada",
       usuario,
-      responsavel, 
+      responsavel,
     });
 
     return this.taskRepository.save(task); // Salva a nova tarefa no banco de dados
