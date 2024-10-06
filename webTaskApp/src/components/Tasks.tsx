@@ -226,8 +226,9 @@ export default function Tasks() {
                       <TableCell className="font-semibold text-center flex justify-center gap-4">
                         <Button
                           onClick={() => handleOpenDialog(task)}
-                          variant="ghost"
+                          variant="outline"
                           className="text-primary hover:bg-primary/10"
+                          disabled={task.status == 'Concluída'}
                         >
                           <EditIcon className="w-4 h-4 mr-1" /> Editar
                         </Button>
