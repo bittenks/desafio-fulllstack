@@ -16,11 +16,6 @@ const AppRoutes: React.FC = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Register />} />
         <Route path="/tarefas" element={<Tasks />} />
-
-        {/* <Route path="/cadastro" element={<RegisterScreen />} />
-        <Route path="/lista-de-tarefas" element={<TaskListScreen />} />
-        <Route path="/detalhes-da-tarefa/:taskId" element={<TaskDetailScreen />} />
-        <Route path="/criar-tarefa" element={<TaskFormScreen />} /> */}
       </Routes>
     </Router>
   );
