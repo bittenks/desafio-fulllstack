@@ -2,23 +2,23 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Provider as PaperProvider, Title, ActivityIndicator } from 'react-native-paper';
 import { loginUser } from '../api/api';
-import useAuth from '../hooks/useAuth'; // Importando o hook de autenticação
+import useAuth from '../hooks/useAuth'; 
 
 const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const { saveToken } = useAuth(); // Usando o hook de autenticação
-  const [loading, setLoading] = useState<boolean>(false); // Estado de loading
+  const { saveToken } = useAuth(); 
+  const [loading, setLoading] = useState<boolean>(false); 
   const handleLogin = async () => {
-    setLoading(true); // Ativando o loading
+    setLoading(true); 
     try {
       const data = await loginUser({ username, password });
       await saveToken(data.access_token); // Armazena o token retornado
       navigation.navigate('Lista de Tarefas');
     } catch (error) {
-      Alert.alert('Erro', 'Usuário ou senha inválidos.');
+      console.log(error)
     } finally {
-      setLoading(false); // Desativando o loading
+      setLoading(false); 
     }
   };
 

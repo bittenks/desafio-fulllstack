@@ -183,12 +183,18 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     marginLeft:12,
     marginRight:12,
-
-    width:"auto"
+    justifyContent:'center',
+    alignItems: 'center',
+    width:140
   },
   createTaskButton: {
     backgroundColor: "#00be78",
     marginTop: 16,
+    width:140,
+    justifyContent:'end',
+
+    alignItems: 'end',
+
   },
 });
 

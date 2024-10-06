@@ -37,7 +37,8 @@ const TaskFormScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         value={descricao} 
         onChangeText={setDescricao} 
         style={styles.input} 
-        mode="outlined" // Modo do input para "outlined"
+        mode="outlined" 
+        theme={inputTheme}
       />
       
       <TextInput 
@@ -45,7 +46,8 @@ const TaskFormScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         value={responsavel} 
         onChangeText={setResponsavel} 
         style={styles.input} 
-        mode="outlined" // Modo do input para "outlined"
+        mode="outlined" 
+        theme={inputTheme}
       />
       
       <Button 
@@ -57,14 +59,14 @@ const TaskFormScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         Criar Tarefa
       </Button>
 
-      {/* Snackbar para feedback ao usuário */}
+  
       <Snackbar
         visible={snackbarVisible}
         onDismiss={hideSnackbar}
         duration={1000}
         action={{
           label: 'Fechar',
-          onPress: hideSnackbar, // Ação do botão no Snackbar
+          onPress: hideSnackbar, 
         }}
       >
         Tarefa criada com sucesso!
@@ -89,6 +91,7 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 12,
+    borderColor:"#044c78"
   },
   button: {
     marginBottom: 12,
@@ -98,9 +101,18 @@ const styles = StyleSheet.create({
     color:"#044c78",
     alignSelf: 'center', 
   },
+  
 });
 
-
+// Tema para os inputs
+const inputTheme = {
+  colors: {
+    primary: '#044c78', // Cor primária
+    placeholder: '#6200ee', // Cor do placeholder
+    text: '#000', // Cor do texto
+    error: '#B00020', // Cor do erro
+  },
+};
 
 
 export default TaskFormScreen;

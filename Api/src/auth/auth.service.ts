@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -21,9 +21,12 @@ export class AuthService {
   }
 
   async register(username: string, password: string): Promise<User> {
+    const existingUser = await this.userService.findByUsername(username);
+    if (existingUser) {
+      throw new ConflictException('Username already exists');
+    }
     return this.userService.create(username, password);
   }
-
   async login(user: User) {
     const payload = { username: user.username, sub: user.id };
     return {

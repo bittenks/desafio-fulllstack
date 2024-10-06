@@ -1,6 +1,5 @@
-// api/api.ts
 import axios from 'axios';
-import { Alert } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 const api = axios.create({
   baseURL: 'https://desafio-fulllstack.onrender.com',
@@ -25,12 +24,31 @@ interface Task {
 
 export const registerUser = async (data: RegisterData) => {
   try {
-    Alert.alert('Salvando', 'Aguarde um momento...');
+    Toast.show({
+      type: 'info',
+      text1: 'Salvando',
+      text2: 'Aguarde um momento...',
+      position: 'top',
+    });
+
+    
     const response = await api.post('/auth/register', data);
-    Alert.alert('Sucesso', 'Usuário registrado com sucesso.');
+
+    Toast.show({
+      type: 'success',
+      text1: 'Sucesso',
+      text2: 'Usuário registrado com sucesso.',
+      position: 'top',
+    });
+
     return response.data;
   } catch (error) {
-    Alert.alert('Erro', 'Ocorreu um erro ao registrar. Tente novamente.');
+    Toast.show({
+      type: 'error',
+      text1: 'Erro',
+      text2: 'Ocorreu um erro ao registrar. Tente novamente.',
+      position: 'top',
+    });
     throw error;
   }
 };
@@ -40,7 +58,12 @@ export const loginUser = async (data: LoginData) => {
     const response = await api.post('/auth/login', data);
     return response.data;
   } catch (error) {
-    Alert.alert('Erro', 'Ocorreu um erro ao fazer login. Verifique suas credenciais.');
+    Toast.show({
+      type: 'error',
+      text1: 'Erro',
+      text2: 'Ocorreu um erro ao fazer login. Verifique suas credenciais.',
+      position: 'top',
+    });
     throw error;
   }
 };
@@ -52,7 +75,6 @@ export const getTasks = async (token: string) => {
     });
     return response;
   } catch (error) {
-    // Alert.alert('Erro', 'Falha ao carregar tarefas.');
     throw error;
   }
 };
@@ -62,21 +84,47 @@ export const createTask = async (data: Omit<Task, 'id'>, token: string) => {
     const response = await api.post('/tasks', data, {
       headers: { Authorization: `Bearer ${token}` },
     });
+
+    Toast.show({
+      type: 'success',
+      text1: 'Sucesso',
+      text2: 'Tarefa criada com sucesso.',
+      position: 'top',
+    });
+
     return response.data;
   } catch (error) {
-    Alert.alert('Erro', 'Falha ao criar tarefa.');
+    Toast.show({
+      type: 'error',
+      text1: 'Erro',
+      text2: 'Falha ao criar tarefa.',
+      position: 'top',
+    });
     throw error;
   }
 };
 
-export const updateTask = async (id: number, data: Omit<Task, 'id'>, token: any) => {
+export const updateTask = async (id: number, data: Omit<Task, 'id'>, token: string) => {
   try {
     const response = await api.patch(`/tasks/${id}`, data, {
       headers: { Authorization: `Bearer ${token}` },
     });
+
+    Toast.show({
+      type: 'success',
+      text1: 'Sucesso',
+      text2: 'Tarefa atualizada com sucesso.',
+      position: 'top',
+    });
+
     return response.data;
   } catch (error) {
-    Alert.alert('Erro', 'Falha ao atualizar tarefa.');
+    Toast.show({
+      type: 'error',
+      text1: 'Erro',
+      text2: 'Falha ao atualizar tarefa.',
+      position: 'top',
+    });
     throw error;
   }
 };
@@ -86,9 +134,22 @@ export const deleteTask = async (id: number, token: string) => {
     const response = await api.delete(`/tasks/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+
+    Toast.show({
+      type: 'success',
+      text1: 'Sucesso',
+      text2: 'Tarefa deletada com sucesso.',
+      position: 'top',
+    });
+
     return response.data;
   } catch (error) {
-    Alert.alert('Erro', 'Falha ao deletar tarefa.');
+    Toast.show({
+      type: 'error',
+      text1: 'Erro',
+      text2: 'Falha ao deletar tarefa.',
+      position: 'top',
+    });
     throw error;
   }
 };
@@ -100,7 +161,12 @@ export const getTaskById = async (id: number, token: string) => {
     });
     return response.data;
   } catch (error) {
-    Alert.alert('Erro', 'Falha ao buscar tarefa.');
+    Toast.show({
+      type: 'error',
+      text1: 'Erro',
+      text2: 'Falha ao buscar tarefa.',
+      position: 'top',
+    });
     throw error;
   }
 };

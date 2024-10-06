@@ -29,14 +29,15 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
   }
 
   const handleUpdateTask = async () => {
-    try {
-      await updateTask(taskId, { ...task, responsavel, status }, token);
-      Alert.alert('Sucesso', 'Tarefa atualizada com sucesso!');
-      fetchTaskDetails(); // Atualiza os detalhes da tarefa após a atualização
-    } catch (error) {
-      console.error(error);
-
+    if (token) {
+      try {
+        await updateTask(taskId, { ...task, responsavel, status }, token);
+        fetchTaskDetails(); // Atualiza os detalhes da tarefa após a atualização
+      } catch (error) {
+        console.error(error);
+      }
     }
+
   };
 
   useEffect(() => {
@@ -46,7 +47,7 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6200ee" />
+        <ActivityIndicator size="large" color="#044c78" />
         <Text style={styles.loadingText}>Carregando...</Text>
       </View>
     );
@@ -55,9 +56,7 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
   return (
     <PaperProvider>
       <View style={styles.container}>
-        <Button mode="outlined" onPress={() => navigation.goBack()} style={styles.backButton}>
-          Voltar
-        </Button>
+    
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.title}>Detalhes da Tarefa</Text>
@@ -84,7 +83,7 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
               <Picker.Item label="Concluída" value="Concluída" />
             </Picker>
 
-            <Button mode="contained" onPress={handleUpdateTask} style={styles.updateButton}>
+            <Button mode="contained" icon={'update'} onPress={handleUpdateTask} style={styles.updateButton}>
               Atualizar Tarefa
             </Button>
           </Card.Content>
@@ -109,9 +108,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 16,
   },
-  backButton: {
-    marginBottom: 16,
-  },
+
   card: {
     padding: 16,
     borderRadius: 8,
@@ -134,7 +131,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#044c78',
     borderRadius: 4,
     padding: 10,
     marginBottom: 12,
@@ -145,7 +142,7 @@ const styles = StyleSheet.create({
   },
   updateButton: {
     marginTop: 12,
-    backgroundColor:"#04c074"
+    backgroundColor: "#04c074"
   },
 });
 
