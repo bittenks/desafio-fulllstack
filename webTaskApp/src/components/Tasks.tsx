@@ -56,6 +56,9 @@ export default function Tasks() {
   const [responsibleId, setResponsibleId] = useState<string>("");
   const [status, setStatus] = useState<string>("");
 
+  // Estado para armazenar o status selecionado no filtro
+  const [filterStatus, setFilterStatus] = useState<string>("Todos");
+
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -77,6 +80,11 @@ export default function Tasks() {
 
     fetchTasks();
   }, [token, toast]);
+
+  // Função para filtrar as tarefas com base no status selecionado
+  const filteredTasks = tasks.filter((task) =>
+    filterStatus === "Todos" ? true : task.status === filterStatus
+  );
 
   const handleOpenDialog = (task: Task | null = null) => {
     setTaskToEdit(task);
@@ -163,10 +171,24 @@ export default function Tasks() {
 
   return (
     <>
-      <div className="flex justify-end my-4 mr-5">
+      <div className="flex justify-between my-4 mx-5">
+        <Select
+          value={filterStatus}
+          onValueChange={setFilterStatus}
+        >
+          <SelectTrigger className="w-64">
+            <SelectValue placeholder="Filtrar por status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Todos">Todos</SelectItem>
+            <SelectItem value="Não Iniciada">Não Iniciada</SelectItem>
+            <SelectItem value="Em Andamento">Em Andamento</SelectItem>
+            <SelectItem value="Concluída">Concluída</SelectItem>
+          </SelectContent>
+        </Select>
         <Button
           onClick={() => handleOpenDialog()}
-          className="mb-4 justify-end "
+          className="mb-4"
           variant={'default'}
         >
           <PlusSquareIcon className="w-4 mr-2" /> Criar Nova Tarefa
@@ -192,7 +214,7 @@ export default function Tasks() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {tasks.map((task: Task) => (
+                  {filteredTasks.map((task: Task) => (
                     <TableRow key={task.id} className="hover:bg-gray-50 transition-colors duration-200">
                       <TableCell className="font-semibold text-center">{task.descricao}</TableCell>
                       <TableCell className="font-semibold text-center">
