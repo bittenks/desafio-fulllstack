@@ -45,7 +45,7 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   const renderStatusIcon = (status: string) => {
     switch (status) {
-      case 'Não Iniciada':
+      case 'Não Iniciada' || 'Não iniciada':
         return <AlertCircle size={24} color="orange" />;
       case 'Em Andamento':
         return <Clock size={24} color="blue" />;

@@ -15,7 +15,7 @@ export class TaskService {
   async createTask(descricao: string, usuario: User, responsavel: string): Promise<Task> {
     const task = this.taskRepository.create({
       descricao,
-      status: 'Não iniciada', // Atribui status padrão como "Não iniciada"
+      status: 'Não Iniciada', // Atribui status padrão como "Não iniciada"
       usuario,
       responsavel, 
     });
