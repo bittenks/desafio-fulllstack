@@ -17,7 +17,7 @@ const TaskFormScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     }
 
     try {
-      await createTask({ descricao, responsavel, status: 'Não iniciada' }, token); 
+      await createTask({ descricao, responsavel, status: 'Não Iniciada' }, token); 
       setSnackbarVisible(true); // Mostra o Snackbar ao criar a tarefa
       setTimeout(() => {
         navigation.navigate('Lista de Tarefas'); // Navega após um tempo

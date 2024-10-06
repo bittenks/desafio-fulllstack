@@ -1,32 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList, Text, ActivityIndicator, Alert } from 'react-native';
+import { View, StyleSheet, FlatList, Text, ActivityIndicator, RefreshControl } from 'react-native';
 import { getTasks, updateTask } from '../api/api';
-import useAuth from '../hooks/useAuth'; // Importando o hook de autenticação
-import { Button, Divider } from 'react-native-paper'; // Usando o componente Button do react-native-paper
-import { Picker } from '@react-native-picker/picker'; // Picker para seleção de status
-import { AlertCircle, CheckCircle, Clock, EditIcon, PlusSquare, User } from 'lucide-react-native';
+import useAuth from '../hooks/useAuth';
+import { Button, Divider } from 'react-native-paper';
+import { Picker } from '@react-native-picker/picker';
+import { AlertCircle, CheckCircle, Clock } from 'lucide-react-native';
+import Toast from 'react-native-toast-message';
 
 const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [tasks, setTasks] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // Estado de carregamento
-  const { token } = useAuth(); // Obtendo o token do hook
+  const [filteredTasks, setFilteredTasks] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [selectedStatus, setSelectedStatus] = useState<string>('Todas');
+  const { token } = useAuth();
 
   const fetchTasks = async () => {
     try {
       if (token) {
+        setLoading(true);
         const response = await getTasks(token);
         setTasks(response.data);
+        setFilteredTasks(response.data); // Inicialmente, mostrar todas as tarefas
       }
     } catch (error) {
-      console.error(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Falha ao carregar tarefas.',
+      });
     } finally {
-      setLoading(false); // Desativando o loading após a requisição
+      setLoading(false);
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
     fetchTasks();
   }, [token]);
+
+  useEffect(() => {
+    filterTasks(selectedStatus);
+  }, [tasks, selectedStatus]);
 
   const renderStatusIcon = (status: string) => {
     switch (status) {
@@ -46,11 +61,24 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       await updateTask(itemId, { status: newStatus }, token);
       fetchTasks(); // Atualiza a lista após a edição
     } catch (error) {
-      Alert.alert('Erro', 'Falha ao atualizar status da tarefa.');
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Falha ao atualizar status da tarefa.',
+      });
     }
   };
 
-  if (loading) {
+  const filterTasks = (status: string) => {
+    if (status === 'Todas') {
+      setFilteredTasks(tasks);
+    } else {
+      const filtered = tasks.filter((task) => task.status === status);
+      setFilteredTasks(filtered);
+    }
+  };
+
+  if (loading && !refreshing) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#044c78" />
@@ -61,35 +89,58 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Button
-        mode="contained"
-        onPress={fetchTasks}
-        style={styles.refreshButton}
-        icon="refresh" 
-      >
-        Atualizar
-      </Button>
-      {tasks.length === 0 ? (
-        <Text style={styles.emptyMessage}>Nenhuma tarefa ainda. Crie uma!</Text>
+      <View style={styles.filterContainer}>
+        <Text style={styles.filterLabel}>Filtrar por Status:</Text>
+        <Picker
+          selectedValue={selectedStatus}
+          style={styles.picker}
+          onValueChange={(itemValue) => {
+            setSelectedStatus(itemValue);
+          }}
+        >
+          <Picker.Item label="Todas" value="Todas" />
+          <Picker.Item label="Não Iniciada" value="Não Iniciada" />
+          <Picker.Item label="Em Andamento" value="Em Andamento" />
+          <Picker.Item label="Concluída" value="Concluída" />
+        </Picker>
+      </View>
+      {filteredTasks.length === 0 ? (
+        <Text style={styles.emptyMessage}>Nenhuma tarefa encontrada para o status selecionado.</Text>
       ) : (
         <FlatList
-          data={tasks}
+          data={filteredTasks}
           renderItem={({ item }) => (
             <View style={styles.listItem}>
               <View style={styles.itemContainer}>
-                {renderStatusIcon(item.status)}
                 <View style={styles.textContainer}>
-                  <Text style={styles.titleText}>{item.descricao}</Text>
-                  <Text style={styles.descriptionText}><User color={'black'} size={2}/>{` ${item.responsavel}`}</Text>
+                  {/* Ícone ao lado da descrição */}
+                  <View style={styles.header}>
+
+                    <View style={styles.iconAndTextContainer}>
+                      {renderStatusIcon(item.status)}
+                      <Text style={styles.titleText}>{item.descricao}</Text>
+                    </View>
+                    <Button
+                      mode="text"
+                      onPress={() => navigation.navigate('Detalhes da tarefa', { taskId: item.id })}
+                      disabled={item.status === 'Concluída'}
+                      icon={'square-edit-outline'}
+                      textColor='#044c78'
+                      style={styles.editButton}
+                      children
+                    />
+                  </View>
+
+                  <Button
+                    mode="text"
+                    icon={'account'}
+                    textColor='#044c78'
+                    style={styles.responsavelButton}
+                  >
+                    {item.responsavel}
+                  </Button>
                 </View>
-                <Button
-                  mode="text" // Definindo o modo do botão
-                  onPress={() => navigation.navigate('Detalhes da tarefa', { taskId: item.id })}
-                  disabled={item.status === 'Concluída'}
-                  style={styles.editButton}
-                >
-                  <EditIcon size={20} color="#044c78" /> {/* Definindo o tamanho e a cor do ícone */}
-                </Button>
+
               </View>
               <View style={styles.statusContainer}>
                 <Picker
@@ -106,6 +157,9 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             </View>
           )}
           keyExtractor={(item) => item.id.toString()}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={fetchTasks} />
+          }
         />
       )}
       <Button
@@ -115,7 +169,6 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         style={styles.createTaskButton}
         icon={'plus-box-outline'}
       >
-    
         {loading ? <ActivityIndicator color="#ffffff" /> : 'Criar Tarefa'}
       </Button>
     </View>
@@ -127,16 +180,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f5f5f5', // Cor de fundo suave
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    flexDirection: 'row',           
+    justifyContent: 'space-between',
+    alignItems: 'center',           
+    marginBottom: 10,               
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  titleText: {
+  filterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  filterLabel: {
     fontSize: 16,
     fontWeight: 'bold',
+    marginRight: 8,
+  },
+  picker: {
+    flex: 1,
   },
   emptyMessage: {
     textAlign: 'center',
@@ -144,57 +212,52 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#888',
   },
-  descriptionText: {
-    fontSize: 14,
-    color: '#666',
-  },
   listItem: {
-    backgroundColor: '#ffffff', // Fundo branco para cada item
+    backgroundColor: '#ffffff',
     borderRadius: 4,
     marginBottom: 8,
     padding: 10,
-    elevation: 1, // Sombra leve
+    elevation: 1,
   },
   statusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', // Espaçamento entre o picker e o botão
+    justifyContent: 'space-between',
     marginTop: 8,
   },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', // Espalhar os itens para ocupar o espaço disponível
+    justifyContent: 'space-between',
   },
   textContainer: {
     flex: 1,
     paddingHorizontal: 8,
   },
-  picker: {
-    flex: 1,
-    marginLeft: 10,
+  iconAndTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  titleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 8, // Adicionando espaço entre ícone e texto
+  },
+  responsavelButton: {
+    alignSelf: 'flex-start', // Alinhando à esquerda
+    paddingVertical: 0, // Reduzindo padding vertical
+    width: 24
   },
   editButton: {
-    width: 70, // Definindo uma largura fixa para o botão
-    marginLeft: 10, // Espaçamento entre o texto e o botão
-  },
-  refreshButton: {
-    backgroundColor: "#044c78",
-    marginBottom: 14,
-    marginLeft:12,
-    marginRight:12,
-    justifyContent:'center',
-    alignItems: 'center',
-    width:140
+
+
   },
   createTaskButton: {
     backgroundColor: "#00be78",
-    marginTop: 16,
-    width:140,
-    justifyContent:'end',
-
-    alignItems: 'end',
-
+    position: 'absolute',
+    bottom: 16,
+    right: 16,
+    borderRadius: 50,
   },
 });
 

@@ -25,8 +25,11 @@ export class AuthService {
     if (existingUser) {
       throw new ConflictException('Username already exists');
     }
+    
     return this.userService.create(username, password);
   }
+  
+
   async login(user: User) {
     const payload = { username: user.username, sub: user.id };
     return {

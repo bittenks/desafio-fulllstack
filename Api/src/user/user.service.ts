@@ -22,12 +22,9 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-  async findByUsername(username: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { username } });
-    if (!user) {
-      throw new NotFoundException('Usuário não encontrado.');
-    }
-    return user;
+  async findByUsername(username: string): Promise<User | null> {
+    // Encontre o usuário pelo username e retorne null se não encontrado
+    return this.userRepository.findOne({ where: { username } });
   }
 
   async getAllUsers(): Promise<User[]> {
