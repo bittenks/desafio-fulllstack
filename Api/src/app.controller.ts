@@ -5,6 +5,6 @@ import { Controller, Get } from '@nestjs/common';
 export class AppController {
   @Get()
   getHello(): string {
-    return 'API is running!';
+    return 'Hello World!';
   }
 }

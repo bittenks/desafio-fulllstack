@@ -1,45 +1,51 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { TextInput, Button, Provider as PaperProvider, Title, Snackbar } from 'react-native-paper';
+import { View, StyleSheet, Image } from 'react-native';
+import { TextInput, Button, Provider as PaperProvider, Title, Snackbar, Text } from 'react-native-paper';
 import { registerUser } from '../api/api';
+
+
+import logo from '../images/logo_tech.png'; 
 
 const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [snackbarVisible, setSnackbarVisible] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
-  const [snackbarColor, setSnackbarColor] = useState<string>('#04c074'); // Default to success color
+  const [snackbarColor, setSnackbarColor] = useState<string>('#04c074'); 
 
   const handleRegister = async () => {
     try {
       if (username && password) {
         await registerUser({ username, password });
-        setSnackbarMessage('Usuário registrado com sucesso.');
-        setSnackbarColor('#04c074'); // Success color
-        setSnackbarVisible(true);
-        navigation.navigate('Login');
+        setTimeout(() => navigation.navigate('Login'), 2000); 
       } else {
         setSnackbarMessage('Usuário e senha são necessários');
-        setSnackbarColor('#B00020'); // Error color
+        setSnackbarColor('#B00020'); 
         setSnackbarVisible(true);
       }
     } catch (error) {
-      setSnackbarMessage('Falha ao registrar usuário.');
-      setSnackbarColor('#B00020'); // Error color
-      setSnackbarVisible(true);
+      console.error(error)
     }
   };
 
   return (
     <PaperProvider>
       <View style={styles.container}>
+        <Image 
+          source={logo} 
+          style={styles.logo} 
+          resizeMode="contain" 
+        />
         <Title style={styles.title}>Registrar</Title>
+        <Text style={styles.subtitle}>Crie sua conta para gerenciar suas tarefas.</Text>
+        
         <TextInput
           label="Usuário"
           value={username}
           onChangeText={setUsername}
           style={styles.input}
           mode="outlined"
+          theme={inputTheme}
         />
         <TextInput
           label="Senha"
@@ -48,6 +54,7 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           secureTextEntry
           style={styles.input}
           mode="outlined"
+          theme={inputTheme}
         />
         <Button mode="contained" onPress={handleRegister} style={styles.button}>
           Registrar
@@ -75,11 +82,23 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#f5f5f5',
   },
+  logo: {
+    width: 150, 
+    height: 150, 
+    alignSelf: 'center', 
+    marginBottom: 16, 
+  },
   title: {
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: 8,
     fontSize: 24,
     color: '#044c78',
+  },
+  subtitle: {
+    textAlign: 'center',
+    marginBottom: 24,
+    fontSize: 16,
+    color: '#555', 
   },
   input: {
     marginBottom: 12,
@@ -93,5 +112,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
 });
+
+const inputTheme = {
+  colors: {
+    primary: '#044c78', 
+    placeholder: '#6200ee', 
+    text: '#000',
+    error: '#B00020', 
+  },
+};
 
 export default RegisterScreen;

@@ -15,6 +15,6 @@ export class Task {
   @ManyToOne(() => User, (user) => user.tasks)
   usuario: User;
 
-  @Column() // Mudando para um campo comum
+  @Column() 
   responsavel: string;
 }

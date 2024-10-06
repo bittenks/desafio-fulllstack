@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { UserService } from '../user/user.service'; // Certifique-se de que o caminho esteja correto
+import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
 import { User } from '../user/user.entity';
+import * as bcrypt from 'bcrypt';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 
 describe('AuthService', () => {
@@ -39,11 +39,13 @@ describe('AuthService', () => {
   });
 
   describe('validateUser', () => {
-    it('deve retornar o usuario se for valido', async () => {
-      const user = {
+    it('should return user if credentials are valid', async () => {
+      const user: User = {
         id: 1,
         username: 'bruno5',
         password: await bcrypt.hash('sua_senha2', 10),
+        tasks: [],           // Propriedades adicionais
+        assignedTasks: [],   // Propriedades adicionais
       };
 
       mockUserService.findByUsername.mockResolvedValue(user);
@@ -53,19 +55,19 @@ describe('AuthService', () => {
       expect(result).toEqual({ id: 1, username: 'bruno5' });
     });
 
-    it('deve retornar UnauthorizedException se usuario nao encontrado', async () => {
+    it('should throw UnauthorizedException if user is not found', async () => {
       mockUserService.findByUsername.mockResolvedValue(null);
 
       await expect(service.validateUser('bruno5', 'sua_senha2')).rejects.toThrow(UnauthorizedException);
     });
 
-    it('deve retornar UnauthorizedException se a senha estiver errada ', async () => {
+    it('should throw UnauthorizedException if password is incorrect', async () => {
       const user: User = {
         id: 1,
         username: 'bruno5',
         password: await bcrypt.hash('sua_senha2', 10),
-        tasks: [],
-        assignedTasks: [],
+        tasks: [],           // Propriedades adicionais
+        assignedTasks: [],   // Propriedades adicionais
       };
 
       mockUserService.findByUsername.mockResolvedValue(user);
@@ -76,15 +78,25 @@ describe('AuthService', () => {
   });
 
   describe('register', () => {
-    it('deve criar um usuario se não existe com o mesmo username', async () => {
+    it('should create a new user if username does not exist', async () => {
       mockUserService.findByUsername.mockResolvedValue(null);
-      mockUserService.create.mockResolvedValue({ id: 1, username: 'bruno5', password: 'hashed_password' });
+
+      const hashedPassword = await bcrypt.hash('sua_senha2', 10);
+      const newUser: User = {
+        id: 1,
+        username: 'bruno5',
+        password: hashedPassword,
+        tasks: [],           // Propriedades adicionais
+        assignedTasks: [],   // Propriedades adicionais
+      };
+
+      mockUserService.create.mockResolvedValue(newUser);
 
       const result = await service.register('bruno5', 'sua_senha2');
-      expect(result).toEqual({ id: 1, username: 'bruno5', password: 'hashed_password' });
+      expect(result).toEqual(newUser);
     });
 
-    it('deve dar ConflictException se ja existe um username', async () => {
+    it('should throw ConflictException if username already exists', async () => {
       mockUserService.findByUsername.mockResolvedValue({ id: 1, username: 'bruno5' });
 
       await expect(service.register('bruno5', 'sua_senha2')).rejects.toThrow(ConflictException);
@@ -92,13 +104,13 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('deve retornar a JWT token', async () => {
+    it('should return a JWT token', async () => {
       const user: User = {
         id: 1,
         username: 'bruno5',
         password: 'sua_senha2',
-        tasks: [],
-        assignedTasks: [],
+        tasks: [],           // Propriedades adicionais
+        assignedTasks: [],   // Propriedades adicionais
       };
 
       const token = 'mocked.jwt.token';

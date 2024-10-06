@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
-import { TextInput, Button, Appbar, Snackbar, Title } from 'react-native-paper';
+import { TextInput, Button,  Title } from 'react-native-paper';
 import { createTask } from '../api/api';
-import useAuth from '../hooks/useAuth'; // Importando o hook
+import useAuth from '../hooks/useAuth'; 
 
 const TaskFormScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [descricao, setDescricao] = useState('');
   const [responsavel, setResponsavel] = useState('');
   const { token } = useAuth(); 
-  const [snackbarVisible, setSnackbarVisible] = useState(false); // Snackbar para feedback
 
   const handleCreateTask = async () => {
     if (!token) {
@@ -18,16 +17,14 @@ const TaskFormScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
     try {
       await createTask({ descricao, responsavel, status: 'Não Iniciada' }, token); 
-      setSnackbarVisible(true); // Mostra o Snackbar ao criar a tarefa
       setTimeout(() => {
-        navigation.navigate('Lista de Tarefas'); // Navega após um tempo
+        navigation.navigate('Lista de Tarefas'); 
       }, 1000);
     } catch (error) {
       Alert.alert('Erro', 'Falha ao criar tarefa.');
     }
   };
 
-  const hideSnackbar = () => setSnackbarVisible(false); // Função para ocultar o Snackbar
 
   return (
     <View style={styles.container}>
@@ -60,22 +57,11 @@ const TaskFormScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       </Button>
 
   
-      <Snackbar
-        visible={snackbarVisible}
-        onDismiss={hideSnackbar}
-        duration={1000}
-        action={{
-          label: 'Fechar',
-          onPress: hideSnackbar, 
-        }}
-      >
-        Tarefa criada com sucesso!
-      </Snackbar>
     </View>
   );
 };
 
-// Estilização
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -87,7 +73,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 24,
     fontSize: 24,
-    color: '#044c78', // Cor do título
+    color: '#044c78', 
   },
   input: {
     marginBottom: 12,
@@ -104,13 +90,13 @@ const styles = StyleSheet.create({
   
 });
 
-// Tema para os inputs
+
 const inputTheme = {
   colors: {
-    primary: '#044c78', // Cor primária
-    placeholder: '#6200ee', // Cor do placeholder
-    text: '#000', // Cor do texto
-    error: '#B00020', // Cor do erro
+    primary: '#044c78', 
+    placeholder: '#6200ee', 
+    text: '#000', 
+    error: '#B00020', 
   },
 };
 

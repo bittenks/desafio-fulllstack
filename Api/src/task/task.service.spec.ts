@@ -4,10 +4,41 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Task } from './task.entity';
 import { User } from '../user/user.entity';
 import { Repository } from 'typeorm';
+import { BadRequestException } from '@nestjs/common';
 
 describe('TaskService', () => {
-  let service: TaskService;
-  let repository: Repository<Task>;
+  let taskService: TaskService;
+  let taskRepository: Repository<Task>;
+
+  // Mock do repositório de tarefas
+  const mockTaskRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+    findOne: jest.fn(),
+    delete: jest.fn(),
+    createQueryBuilder: jest.fn().mockReturnThis(),
+    where: jest.fn().mockReturnThis(),
+    andWhere: jest.fn().mockReturnThis(),
+    getMany: jest.fn(),
+  };
+
+  // Mock do usuário
+  const mockUser: User = { 
+    id: 1, 
+    username: 'bruno5', 
+    password: 'sua_senha2', 
+    tasks: [], // Adicionando tarefas vazias
+    assignedTasks: [] // Adicionando tarefas atribuídas vazias
+  };
+
+  // Usuário não autorizado mockado
+  const unauthorizedUser: User = { 
+    id: 2, 
+    username: 'usuario_diferente', 
+    password: 'outra_senha', // Necessário para satisfazer o tipo User
+    tasks: [],
+    assignedTasks: []
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -15,65 +46,45 @@ describe('TaskService', () => {
         TaskService,
         {
           provide: getRepositoryToken(Task),
-          useClass: Repository, // Usando um mock do Repository
+          useValue: mockTaskRepository,
         },
       ],
     }).compile();
 
-    service = module.get<TaskService>(TaskService);
-    repository = module.get<Repository<Task>>(getRepositoryToken(Task));
+    taskService = module.get<TaskService>(TaskService);
+    taskRepository = module.get<Repository<Task>>(getRepositoryToken(Task));
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('should create a new task', async () => {
-    const user: User = { id: 1, username: 'testuser', password: 'password', tasks: [], assignedTasks: [] };
-    const descricao = 'Test Task';
-    const responsavel: User = { id: 2, username: 'responsavel', password: 'password', tasks: [], assignedTasks: [] };
+  describe('updateTask', () => {
+    it('deve atualizar a tarefa', async () => {
+      const taskId = 1;
+      const updateData = { descricao: 'Tarefa Atualizada' };
+      const existingTask = { id: taskId, usuario: mockUser, ...updateData };
+      mockTaskRepository.findOne.mockResolvedValue(existingTask);
+      mockTaskRepository.save.mockResolvedValue(existingTask);
 
-    const task: Task = { id: 1, descricao, status: 'pendente', usuario: user, responsavel };
+      const result = await taskService.updateTask(taskId, updateData, mockUser);
+      expect(result).toEqual(existingTask);
+      expect(mockTaskRepository.save).toHaveBeenCalledWith(expect.objectContaining(updateData));
+    });
 
-    jest.spyOn(repository, 'create').mockReturnValue(task);
-    jest.spyOn(repository, 'save').mockResolvedValue(task);
+    it('deve lançar BadRequestException se a tarefa não for encontrada', async () => {
+      const taskId = 1;
+      mockTaskRepository.findOne.mockResolvedValue(null);
 
-    expect(await service.createTask(descricao, user, responsavel)).toEqual(task);
-    expect(repository.create).toHaveBeenCalledWith({ descricao, status: 'pendente', usuario: user, responsavel });
-    expect(repository.save).toHaveBeenCalledWith(task);
-  });
+      await expect(taskService.updateTask(taskId, {}, mockUser)).rejects.toThrow(BadRequestException);
+    });
 
-  it('should update task status', async () => {
-    const user: User = { id: 1, username: 'testuser', password: 'password', tasks: [], assignedTasks: [] };
-    const task: Task = { id: 1, descricao: 'Test Task', status: 'pendente', usuario: user, responsavel: null };
+    it('deve lançar BadRequestException se o usuário não estiver autorizado', async () => {
+      const taskId = 1;
+      const existingTask = { id: taskId, usuario: mockUser };
+      mockTaskRepository.findOne.mockResolvedValue(existingTask);
 
-    jest.spyOn(repository, 'findOne').mockResolvedValue(task);
-    jest.spyOn(repository, 'save').mockResolvedValue({ ...task, status: 'concluída' });
-
-    const updatedTask = await service.updateTaskStatus(1, 'concluída', user);
-    expect(updatedTask.status).toBe('concluída');
-    expect(repository.save).toHaveBeenCalledWith({ ...task, status: 'concluída' });
-  });
-
-  it('should throw an error if task is not found or unauthorized', async () => {
-    const user: User = { id: 1, username: 'testuser', password: 'password', tasks: [], assignedTasks: [] };
-
-    jest.spyOn(repository, 'findOne').mockResolvedValue(null); // Não encontrou a tarefa
-
-    await expect(service.updateTaskStatus(1, 'concluída', user)).rejects.toThrow('Task not found or unauthorized');
-  });
-
-  it('should get tasks by user', async () => {
-    const user: User = { id: 1, username: 'testuser', password: 'password', tasks: [], assignedTasks: [] };
-    const tasks: Task[] = [
-      { id: 1, descricao: 'Task 1', status: 'pendente', usuario: user, responsavel: null },
-      { id: 2, descricao: 'Task 2', status: 'pendente', usuario: user, responsavel: user },
-    ];
-
-    jest.spyOn(repository, 'find').mockResolvedValue(tasks);
-
-    const result = await service.getTasksByUser(user);
-    expect(result).toEqual(tasks);
-    expect(repository.find).toHaveBeenCalledWith({ where: [{ usuario: user }, { responsavel: user }] });
+      await expect(taskService.updateTask(taskId, {}, unauthorizedUser)).rejects.toThrow(BadRequestException);
+    });
   });
 });

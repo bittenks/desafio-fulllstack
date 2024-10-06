@@ -14,11 +14,10 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     setLoading(true);
     try {
       const data = await loginUser({ username, password });
-      await saveToken(data.access_token); // Armazena o token retornado
+      await saveToken(data.access_token); 
       navigation.navigate('Lista de Tarefas');
     } catch (error) {
       console.log(error);
-      Alert.alert('Erro', 'Usuário ou senha inválidos. Tente novamente.'); // Exibe um alerta em caso de erro
     } finally {
       setLoading(false);
     }
@@ -56,7 +55,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           mode="contained"
           onPress={handleLogin}
           style={styles.button}
-          disabled={loading} // Desabilita o botão enquanto está carregando
+          disabled={loading} 
         >
           {loading ? <ActivityIndicator color="#ffffff" /> : 'Login'}
         </Button>
@@ -68,7 +67,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   );
 };
 
-// Estilização
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -77,22 +76,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   logo: {
-    width: 150, // Largura da imagem
-    height: 150, // Altura da imagem
-    alignSelf: 'center', // Centraliza a imagem
-    marginBottom: 16, // Espaço entre a imagem e o título
+    width: 150, 
+    height: 150, 
+    alignSelf: 'center', 
+    marginBottom: 16, 
   },
   title: {
     textAlign: 'center',
     marginBottom: 8,
     fontSize: 24,
-    color: '#044c78', // Cor do título
+    color: '#044c78',
   },
   subtitle: {
     textAlign: 'center',
     marginBottom: 24,
     fontSize: 16,
-    color: '#555', // Cor do subtítulo
+    color: '#555', 
   },
   input: {
     marginBottom: 12,
@@ -107,13 +106,12 @@ const styles = StyleSheet.create({
   },
 });
 
-// Tema para os inputs
 const inputTheme = {
   colors: {
-    primary: '#044c78', // Cor primária
-    placeholder: '#6200ee', // Cor do placeholder
-    text: '#000', // Cor do texto
-    error: '#B00020', // Cor do erro
+    primary: '#044c78', 
+    placeholder: '#6200ee', 
+    text: '#000',
+    error: '#B00020', 
   },
 };
 

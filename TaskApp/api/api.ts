@@ -31,7 +31,7 @@ export const registerUser = async (data: RegisterData) => {
       position: 'top',
     });
 
-    
+
     const response = await api.post('/auth/register', data);
 
     Toast.show({
@@ -45,9 +45,10 @@ export const registerUser = async (data: RegisterData) => {
   } catch (error) {
     Toast.show({
       type: 'error',
-      text1: 'Erro',
-      text2: 'Ocorreu um erro ao registrar. Tente novamente.',
-      position: 'top',
+      text1: 'Erro! Ocorreu um erro ao registrar.',
+      text2: ' Tente novamente com um nome de usuário diferente.',
+
+      position: 'bottom',
     });
     throw error;
   }
@@ -104,7 +105,7 @@ export const createTask = async (data: Omit<Task, 'id'>, token: string) => {
   }
 };
 
-export const updateTask = async (id: number, data: Omit<Task, 'id'>, token: string) => {
+export const updateTask = async (id: number, data: Omit<any, 'id'>, token: any) => {
   try {
     const response = await api.patch(`/tasks/${id}`, data, {
       headers: { Authorization: `Bearer ${token}` },
