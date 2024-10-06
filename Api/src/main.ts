@@ -8,7 +8,8 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:5173', // Frontend
-      'https://desafiofullstack.netlify.app' // Produção
+      'https://desafiofullstack.netlify.app',
+      'https://desafiofullstackbittencourt.netlify.app/', // Produção
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type, Authorization', // Adicione aqui os headers permitidos
