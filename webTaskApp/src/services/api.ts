@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://desafio-fulllstack.onrender.com',
+  baseURL: 'http://localhost:3000',
 
 });
 
@@ -17,6 +17,7 @@ interface LoginData {
 
 interface Task {
   id: number;
+  title: string;
   descricao: string;
   status: string;
   responsavel: string;
@@ -84,13 +85,15 @@ export const getTasks = async (token: string) => {
 
 export const getUsers = async () => {
   try {
-    const response = await axios.get('/users', {
-      headers: {
-        'Content-Type': 'application/json',
-        // adicione mais headers se necessário
-      },
-    });
-    console.log(response);
+    const response = await api.get('/users')
+    console.log(response.data);
+    const data = await response.data;
+
+    // Filtra apenas id e username
+    return data.map((user: any) => ({
+      id: user.id,
+      username: user.username
+    }));
   } catch (error) {
     console.error('Erro ao buscar usuários:', error);
   }

@@ -15,7 +15,7 @@ const AppNavigator: React.FC = () => {
     <>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login">
-          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen  name="Login" component={LoginScreen} />
           <Stack.Screen name="Cadastro" component={RegisterScreen} />
           <Stack.Screen name="Lista de Tarefas" component={TaskListScreen} />
           <Stack.Screen name="Detalhes da tarefa" component={TaskDetailScreen} />

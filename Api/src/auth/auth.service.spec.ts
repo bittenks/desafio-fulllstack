@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { UserService } from '../user/user.service'; // Certifique-se de que o caminho esteja correto
+import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from '../user/user.entity';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 
 describe('AuthService', () => {
-  let service: AuthService;
+  let authService: AuthService;
   let userService: UserService;
   let jwtService: JwtService;
 
@@ -29,17 +29,17 @@ describe('AuthService', () => {
       ],
     }).compile();
 
-    service = module.get<AuthService>(AuthService);
+    authService = module.get<AuthService>(AuthService);
     userService = module.get<UserService>(UserService);
     jwtService = module.get<JwtService>(JwtService);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(authService).toBeDefined();
   });
 
   describe('validateUser', () => {
-    it('deve retornar o usuario se for valido', async () => {
+    it('deve retornar o usuário se for válido', async () => {
       const user = {
         id: 1,
         username: 'bruno5',
@@ -49,17 +49,17 @@ describe('AuthService', () => {
       mockUserService.findByUsername.mockResolvedValue(user);
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
 
-      const result = await service.validateUser('bruno5', 'sua_senha2');
-      expect(result).toEqual({ id: 1, username: 'bruno5' });
+      const result = await authService.validateUser('bruno5', 'sua_senha2');
+      expect(result).toEqual({ id: user.id, username: user.username });
     });
 
-    it('deve retornar UnauthorizedException se usuario nao encontrado', async () => {
+    it('deve retornar UnauthorizedException se o usuário não for encontrado', async () => {
       mockUserService.findByUsername.mockResolvedValue(null);
 
-      await expect(service.validateUser('bruno5', 'sua_senha2')).rejects.toThrow(UnauthorizedException);
+      await expect(authService.validateUser('bruno5', 'sua_senha2')).rejects.toThrow(UnauthorizedException);
     });
 
-    it('deve retornar UnauthorizedException se a senha estiver errada ', async () => {
+    it('deve retornar UnauthorizedException se a senha estiver errada', async () => {
       const user: User = {
         id: 1,
         username: 'bruno5',
@@ -71,42 +71,66 @@ describe('AuthService', () => {
       mockUserService.findByUsername.mockResolvedValue(user);
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
 
-      await expect(service.validateUser('bruno5', 'senha_errada')).rejects.toThrow(UnauthorizedException);
+      await expect(authService.validateUser('bruno5', 'senha_errada')).rejects.toThrow(UnauthorizedException);
     });
   });
 
   describe('register', () => {
-    it('deve criar um usuario se não existe com o mesmo username', async () => {
+    it('deve criar um usuário se não existir com o mesmo username', async () => {
       mockUserService.findByUsername.mockResolvedValue(null);
-      mockUserService.create.mockResolvedValue({ id: 1, username: 'bruno5', password: 'hashed_password' });
+      const user = { id: 1, username: 'bruno5', password: 'hashed_password' };
+      mockUserService.create.mockResolvedValue(user);
 
-      const result = await service.register('bruno5', 'sua_senha2');
-      expect(result).toEqual({ id: 1, username: 'bruno5', password: 'hashed_password' });
+      const result = await authService.register('bruno5', 'sua_senha2');
+      expect(result).toEqual(user);
+      expect(mockUserService.create).toHaveBeenCalledWith('bruno5', expect.any(String));
     });
 
-    it('deve dar ConflictException se ja existe um username', async () => {
+    it('deve dar ConflictException se já existir um username', async () => {
       mockUserService.findByUsername.mockResolvedValue({ id: 1, username: 'bruno5' });
 
-      await expect(service.register('bruno5', 'sua_senha2')).rejects.toThrow(ConflictException);
+      await expect(authService.register('bruno5', 'sua_senha2')).rejects.toThrow(ConflictException);
+    });
+
+    it('deve chamar a função de criar com senha hash', async () => {
+      const user = { id: 1, username: 'bruno5', password: 'hashed_password' };
+      mockUserService.findByUsername.mockResolvedValue(null);
+      mockUserService.create.mockResolvedValue(user);
+      const password = 'sua_senha2';
+
+      const result = await authService.register('bruno5', password);
+
+
+      expect(result.password).not.toEqual(password);
     });
   });
 
   describe('login', () => {
-    it('deve retornar a JWT token', async () => {
+    it('deve retornar um access_token e informações do usuário', async () => {
       const user: User = {
         id: 1,
         username: 'bruno5',
-        password: 'sua_senha2',
-        tasks: [],
-        assignedTasks: [],
+        password: 'hashed_password',
+        tasks: [], // Tarefas criadas pelo usuário
+        assignedTasks: [], // Tarefas atribuídas ao usuário
       };
 
       const token = 'mocked.jwt.token';
       mockJwtService.sign.mockReturnValue(token);
 
-      const result = await service.login(user);
-      expect(result).toEqual({ access_token: token });
+      const result = await authService.login(user);
+
+      expect(result).toEqual({
+        id: user.id,
+        username: user.username,
+        createdTasks: user.tasks, // Tarefas que o usuário criou
+        assignedTasks: user.assignedTasks, // Tarefas atribuídas ao usuário
+        access_token: token,
+      });
+
       expect(mockJwtService.sign).toHaveBeenCalledWith({ username: user.username, sub: user.id });
     });
   });
+
+
 });

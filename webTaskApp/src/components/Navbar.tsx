@@ -10,8 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import useAuth from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import avatar from '../../public/iconeperfil.webp';
-import obucIcon from '../../public/logo_tech.png';
+import avatar from '/iconeperfil.webp';
+import obucIcon from '/logo_tech.png';
 
 export default function NavBar() {
   const { username, clearAuth } = useAuth();

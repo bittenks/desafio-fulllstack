@@ -11,17 +11,16 @@ export class TaskService {
     @InjectRepository(Task)
     private taskRepository: Repository<Task>,
     private userService: UserService,
-  ) { }
+  ) {}
 
   // Método para criar uma nova tarefa
-  async createTask(title: string, descricao: string, usuario: User, responsavelId: number, status: string): Promise<Task> {
+  async createTask(descricao: string, usuario: User, responsavelId: number, status: string): Promise<Task> {
     const responsavel = await this.userService.getUserById(responsavelId);
     if (!responsavel) {
       throw new NotFoundException('Usuário responsável não encontrado.');
     }
 
     const task = this.taskRepository.create({
-      title,
       descricao,
       status: status ? status : "Não Iniciada",
       usuario,

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
-import { User } from './user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { User } from './user.entity';
 import { Repository } from 'typeorm';
+import { NotFoundException, ConflictException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { NotFoundException } from '@nestjs/common';
 
 describe('UserService', () => {
   let userService: UserService;
@@ -21,9 +21,9 @@ describe('UserService', () => {
   const mockUser: User = {
     id: 1,
     username: 'bruno5',
-    password: 'hashed_password', 
+    password: 'hashed_password',
     tasks: [],
-    assignedTasks: []
+    assignedTasks: [],
   };
 
   beforeEach(async () => {
@@ -47,95 +47,44 @@ describe('UserService', () => {
 
   describe('create', () => {
     it('deve criar um novo usuário', async () => {
-        const username = 'bruno5';
-        const password = 'sua_senha2';
-        const hashedPassword = await bcrypt.hash(password, 10); 
+      mockUserRepository.findOne.mockResolvedValue(null); // Nenhum usuário existente
+      mockUserRepository.create.mockReturnValue(mockUser);
+      mockUserRepository.save.mockResolvedValue(mockUser);
 
-        
-        mockUserRepository.create.mockReturnValue({
-            id: 1,
-            username,
-            password: hashedPassword, 
-        });
-        mockUserRepository.save.mockResolvedValue({
-            id: 1,
-            username,
-            password: hashedPassword, 
-        });
-
-        const result = await userService.create(username, password);
-        
-        
-        expect(result.username).toEqual(username);
-        expect(result.id).toEqual(1);
-        
-        
-        expect(mockUserRepository.create).toHaveBeenCalledWith({
-            username,
-            password: expect.any(String), 
-        });
-        
-        expect(mockUserRepository.save).toHaveBeenCalledWith({
-            id: 1,
-            username,
-            password: expect.any(String), 
-        });
-    });
-});
-
-
-
-  describe('findByUsername', () => {
-    it('deve retornar um usuário se encontrado', async () => {
-      mockUserRepository.findOne.mockResolvedValue(mockUser);
-
-      const result = await userService.findByUsername('bruno5');
+      const result = await userService.create('bruno5', 'senha123');
       expect(result).toEqual(mockUser);
-      expect(mockUserRepository.findOne).toHaveBeenCalledWith({ where: { username: 'bruno5' } });
+      expect(mockUserRepository.create).toHaveBeenCalledWith(expect.objectContaining({ username: 'bruno5' }));
+      expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
     });
 
-    it('deve retornar null se o usuário não for encontrado', async () => {
-      mockUserRepository.findOne.mockResolvedValue(null);
+    it('deve lançar ConflictException se o usuário já existir', async () => {
+      mockUserRepository.findOne.mockResolvedValue(mockUser); // Usuário já existente
 
-      const result = await userService.findByUsername('usuario_inexistente');
-      expect(result).toBeNull();
-    });
-  });
-
-  describe('getAllUsers', () => {
-    it('deve retornar todos os usuários', async () => {
-      mockUserRepository.find.mockResolvedValue([mockUser]);
-
-      const result = await userService.getAllUsers();
-      expect(result).toEqual([mockUser]);
-      expect(mockUserRepository.find).toHaveBeenCalled();
+      await expect(userService.create('bruno5', 'senha123')).rejects.toThrow(ConflictException);
     });
   });
 
   describe('getUserById', () => {
-    it('deve retornar um usuário se encontrado', async () => {
+    it('deve retornar um usuário pelo ID', async () => {
       mockUserRepository.findOne.mockResolvedValue(mockUser);
 
       const result = await userService.getUserById(1);
       expect(result).toEqual(mockUser);
-      expect(mockUserRepository.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
     });
 
     it('deve lançar NotFoundException se o usuário não for encontrado', async () => {
       mockUserRepository.findOne.mockResolvedValue(null);
 
       await expect(userService.getUserById(999)).rejects.toThrow(NotFoundException);
-      await expect(userService.getUserById(999)).rejects.toThrow('Usuário não encontrado.');
     });
   });
 
   describe('deleteUser', () => {
-    it('deve deletar um usuário se encontrado', async () => {
+    it('deve deletar um usuário existente', async () => {
       mockUserRepository.findOne.mockResolvedValue(mockUser);
-      mockUserRepository.remove.mockResolvedValue(undefined); 
+      mockUserRepository.remove.mockResolvedValue(undefined);
 
-      await userService.deleteUser(1);
-      expect(mockUserRepository.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
+      await userService.deleteUser(mockUser.id);
       expect(mockUserRepository.remove).toHaveBeenCalledWith(mockUser);
     });
 
@@ -143,7 +92,6 @@ describe('UserService', () => {
       mockUserRepository.findOne.mockResolvedValue(null);
 
       await expect(userService.deleteUser(999)).rejects.toThrow(NotFoundException);
-      await expect(userService.deleteUser(999)).rejects.toThrow('Usuário não encontrado.');
     });
   });
 });

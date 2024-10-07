@@ -15,6 +15,7 @@ import {
   createTask,
   updateTask,
   deleteTask,
+  getUsers,
 } from "@/services/api";
 import {
   Table,
@@ -34,11 +35,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { Textarea } from "./ui/textarea";
 
 export interface Task {
+  title: string;
   id: number;
   descricao: string;
-  responsavel: string;
+  responsavel: {
+    id: number; // ID do responsável
+    username: string; // Nome do responsável
+  };
   status: string;
 }
 
@@ -53,13 +59,29 @@ export default function Tasks() {
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
   const [taskName, setTaskName] = useState<string>("");
+  const [taskDescr, setTaskDescr] = useState<string>("");
+
   const [responsibleId, setResponsibleId] = useState<string>("");
   const [status, setStatus] = useState<string>("");
-
-  // Estado para armazenar o status selecionado no filtro
   const [filterStatus, setFilterStatus] = useState<string>("Todos");
-
+  const [users, setUsers] = useState<{ id: number; username: string }[]>([]);
   useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        if (token) {
+          const usersData = await getUsers();
+          setUsers(usersData || []);
+        }
+      }
+      catch (error) {
+        console.error("Erro ao buscar usuários:", error);
+        toast({
+          title: "Erro",
+          description: "Erro ao carregar usuários.",
+        });
+      }
+    };
+
     const fetchTasks = async () => {
       try {
         if (token) {
@@ -77,11 +99,10 @@ export default function Tasks() {
         setLoading(false);
       }
     };
-
+    fetchUsers()
     fetchTasks();
   }, [token, toast]);
 
-  // Função para filtrar as tarefas com base no status selecionado
   const filteredTasks = tasks.filter((task) =>
     filterStatus === "Todos" ? true : task.status === filterStatus
   );
@@ -90,7 +111,7 @@ export default function Tasks() {
     setTaskToEdit(task);
     if (task) {
       setTaskName(task.descricao);
-      setResponsibleId(task.responsavel);
+      setResponsibleId(task.responsavel.id.toString()); // Supondo que seja um ID
       setStatus(task.status);
     } else {
       setTaskName("");
@@ -209,6 +230,7 @@ export default function Tasks() {
                   <TableRow>
                     <TableHead className="font-semibold text-center">Tarefa</TableHead>
                     <TableHead className="font-semibold text-center">Status</TableHead>
+                    <TableHead className="font-semibold text-center">Descrição</TableHead>
                     <TableHead className="font-semibold text-center">Responsável</TableHead>
                     <TableHead className="font-semibold text-center">Ações</TableHead>
                   </TableRow>
@@ -216,19 +238,22 @@ export default function Tasks() {
                 <TableBody>
                   {filteredTasks.map((task: Task) => (
                     <TableRow key={task.id} className="hover:bg-gray-50 transition-colors duration-200">
-                      <TableCell className="font-semibold text-center">{task.descricao}</TableCell>
+                      <TableCell className="font-semibold text-center">{task.title}</TableCell>
                       <TableCell className="font-semibold text-center">
                         <Badge className={getBadgeVariant(task.status)}>
+
                           {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="font-semibold text-center">{task.responsavel}</TableCell>
+                      <TableCell className="font-semibold text-center">{task.descricao}</TableCell>
+
+                      <TableCell className="font-semibold text-center">{task.responsavel.username}</TableCell> {/* Alterado aqui */}
                       <TableCell className="font-semibold text-center flex justify-center gap-4">
                         <Button
                           onClick={() => handleOpenDialog(task)}
                           variant="outline"
                           className="text-primary hover:bg-primary/10"
-                          disabled={task.status == 'Concluída'}
+                          disabled={task.status === 'Concluída'}
                         >
                           <EditIcon className="w-4 h-4 mr-1" /> Editar
                         </Button>
@@ -244,7 +269,6 @@ export default function Tasks() {
                   ))}
                 </TableBody>
               </Table>
-              {/* Diálogo para criar/editar tarefas */}
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent>
                   <DialogHeader>
@@ -262,14 +286,26 @@ export default function Tasks() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="responsibleId">Responsável</Label>
-                      <Input
-                        id="responsibleId"
-                        type="text"
-                        value={responsibleId}
-                        onChange={(e) => setResponsibleId(e.target.value)}
+                      <Label htmlFor="taskDescr">Descrição da Tarefa</Label>
+                      <Textarea
+                        id="taskDescr"
+                        value={taskDescr}
+                        onChange={(e) => setTaskDescr(e.target.value)}
                         required
                       />
+                    </div>
+                    <div>
+                      <Label htmlFor="responsibleId">Responsável</Label>
+                      <Select value={responsibleId} onValueChange={setResponsibleId} required>
+                        <SelectTrigger className="border rounded p-2 w-full">
+                          <SelectValue placeholder="Selecione um responsável" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {users.map(user => (
+                            <SelectItem key={user.id} value={user.id.toString()}>{user.username}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
                       <Label htmlFor="status">Status</Label>
@@ -300,7 +336,7 @@ export default function Tasks() {
                 </DialogContent>
               </Dialog>
 
-              {/* Diálogo para confirmação de exclusão */}
+
               <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <DialogContent>
                   <DialogHeader>

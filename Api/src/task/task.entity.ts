@@ -5,16 +5,16 @@ import { User } from '../user/user.entity';
 export class Task {
   @PrimaryGeneratedColumn()
   id: number;
-
+  @Column()
+  title: string;
   @Column()
   descricao: string;
-
   @Column()
-  status: string; // Pode ser 'pendente', 'em progresso', 'concluída'
+  status: string;
 
-  @ManyToOne(() => User, (user) => user.tasks)
+  @ManyToOne(() => User, user => user.tasks, { eager: false }) // Usuário que criou a tarefa
   usuario: User;
 
-  @Column() 
-  responsavel: string;
+  @ManyToOne(() => User, user => user.assignedTasks, { eager: false }) // Usuário responsável pela tarefa
+  responsavel: User;
 }

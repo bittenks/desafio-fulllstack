@@ -13,10 +13,10 @@ export class TaskController {
   // Rota para criar uma tarefa
   @Post()
   async createTask(
-    @Body() body: { descricao: string; responsavel: string, status: string },
+    @Body() body: { title: string; descricao: string; responsavel: number, status?: string },
     @GetUser() usuario: User,
   ): Promise<Task> {
-    return this.taskService.createTask(body.descricao, usuario, body.responsavel, body.status);
+    return this.taskService.createTask(body.title, body.descricao, usuario, body.responsavel, body.status);
   }
 
   // Rota para atualizar uma tarefa

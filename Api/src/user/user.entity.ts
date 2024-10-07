@@ -12,9 +12,9 @@ export class User {
   @Column()
   password: string;
 
-  @OneToMany(() => Task, (task) => task.usuario)
+  @OneToMany(() => Task, task => task.usuario, { eager: true })
   tasks: Task[];
 
-  @OneToMany(() => Task, (task) => task.responsavel)
+  @OneToMany(() => Task, task => task.responsavel, { eager: true })
   assignedTasks: Task[];
 }

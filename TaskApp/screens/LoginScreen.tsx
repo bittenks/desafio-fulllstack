@@ -14,7 +14,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     setLoading(true);
     try {
       const data = await loginUser({ username, password });
-      await saveToken(data.access_token); 
+      await saveToken(data.access_token);
       navigation.navigate('Lista de Tarefas');
     } catch (error) {
       console.log(error);
@@ -55,7 +55,7 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           mode="contained"
           onPress={handleLogin}
           style={styles.button}
-          disabled={loading} 
+          disabled={loading}
         >
           {loading ? <ActivityIndicator color="#ffffff" /> : 'Login'}
         </Button>
@@ -76,10 +76,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   logo: {
-    width: 150, 
-    height: 150, 
-    alignSelf: 'center', 
-    marginBottom: 16, 
+    width: 150,
+    height: 150,
+    alignSelf: 'center',
+    marginBottom: 16,
   },
   title: {
     textAlign: 'center',
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 24,
     fontSize: 16,
-    color: '#555', 
+    color: '#555',
   },
   input: {
     marginBottom: 12,
@@ -108,10 +108,10 @@ const styles = StyleSheet.create({
 
 const inputTheme = {
   colors: {
-    primary: '#044c78', 
-    placeholder: '#6200ee', 
+    primary: '#044c78',
+    placeholder: '#6200ee',
     text: '#000',
-    error: '#B00020', 
+    error: '#B00020',
   },
 };
 
