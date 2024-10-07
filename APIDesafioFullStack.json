@@ -1,0 +1,274 @@
+{
+  "info": {
+    "name": "APIDesafioFullStack",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "bruno",
+      "event": []
+    },
+    {
+      "name": "Criar Tarefa",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpdHRlbmtzIiwic3ViIjoyLCJpYXQiOjE3MjgxNjE3MDIsImV4cCI6MTcyODE2NTMwMn0.EzAU_WHS1aU4xveUDCgGZ5mP-odwozrBU6KvFHQ-A7g",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "http://localhost:3000/tasks",
+          "protocol": "http",
+          "host": [
+            "localhost:3000"
+          ],
+          "path": [
+            "tasks"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"descricao\": \"Tarefa 2\",\n  \"responsavel\": \"Responsável Exemplo\"\n}\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Deletar Tarefa",
+      "event": [],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJydW5vIiwic3ViIjoxLCJpYXQiOjE3MjgxNTA1OTcsImV4cCI6MTcyODE1NDE5N30.zATAGNO_WIzjVfhk72xEWk2uj_n49zip9ZX6qQAFLJw",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "http://localhost:3000/tasks/2",
+          "protocol": "http",
+          "host": [
+            "localhost:3000"
+          ],
+          "path": [
+            "tasks",
+            "2"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Editar Tarefa",
+      "event": [],
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJydW5vMiIsInN1YiI6MiwiaWF0IjoxNzI4MTUyNDU1LCJleHAiOjE3MjgxNTYwNTV9.SD-qUdrlTDhSUwk_hNC_F4fJk6xp8mz_xttx1n5ltBY",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "http://localhost:3000/tasks/2",
+          "protocol": "http",
+          "host": [
+            "localhost:3000"
+          ],
+          "path": [
+            "tasks",
+            "2"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"descricao\": \"Tarefa Atualizada\",\n  \"responsavel\": \"Novo Responsável\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Endpoint de Autenticação de Usuário",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "http://localhost:3000/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost:3000"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"bittenks\",\n    \"password\": \"sua_senha2\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Endpoint de Criação de Usuário",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "http://localhost:3000/auth/register",
+          "protocol": "http",
+          "host": [
+            "localhost:3000"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"bittenks\",\n    \"password\": \"sua_senha2\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Get Usuarios",
+      "event": [],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "http://localhost:3000/users",
+          "protocol": "http",
+          "host": [
+            "localhost:3000"
+          ],
+          "path": [
+            "users"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Visualizar Tarefas",
+      "event": [],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpdHRlbmtzIiwic3ViIjoyLCJpYXQiOjE3MjgxNjE3MDIsImV4cCI6MTcyODE2NTMwMn0.EzAU_WHS1aU4xveUDCgGZ5mP-odwozrBU6KvFHQ-A7g",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "http://localhost:3000/tasks",
+          "protocol": "http",
+          "host": [
+            "localhost:3000"
+          ],
+          "path": [
+            "tasks"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "testando",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "http://localhost:3000/auth/register",
+          "protocol": "http",
+          "host": [
+            "localhost:3000"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\":\"testuser\", \"password\":\"testpassword\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "variable": []
+}

@@ -1,0 +1,249 @@
+{
+  "info": {
+    "name": "APIDesafioFullStack Prod",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "bruno",
+      "event": []
+    },
+    {
+      "name": "Criar Tarefa",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imd1aWxoZXJtZSIsInN1YiI6MywiaWF0IjoxNzI4MTU0MzAyLCJleHAiOjE3MjgxNTc5MDJ9.o2kfeC_ef5uVttvB3P7OE7d_zXdHn2nvwv-AJNVRaEM",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "https://desafio-fulllstack.onrender.com/tasks",
+          "protocol": "https",
+          "host": [
+            "desafio-fulllstack",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "tasks"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"descricao\": \"Tarefa 2\",\n  \"responsavel\": \"Responsável Exemplo\"\n}\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Deletar Tarefa",
+      "event": [],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imd1aWxoZXJtZSIsInN1YiI6MywiaWF0IjoxNzI4MTU0MzAyLCJleHAiOjE3MjgxNTc5MDJ9.o2kfeC_ef5uVttvB3P7OE7d_zXdHn2nvwv-AJNVRaEM",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "https://desafio-fulllstack.onrender.com/tasks/6",
+          "protocol": "https",
+          "host": [
+            "desafio-fulllstack",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "tasks",
+            "6"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Editar Tarefa",
+      "event": [],
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imd1aWxoZXJtZSIsInN1YiI6MywiaWF0IjoxNzI4MTU0MzAyLCJleHAiOjE3MjgxNTc5MDJ9.o2kfeC_ef5uVttvB3P7OE7d_zXdHn2nvwv-AJNVRaEM",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "https://desafio-fulllstack.onrender.com/tasks/6",
+          "protocol": "https",
+          "host": [
+            "desafio-fulllstack",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "tasks",
+            "6"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"descricao\": \"Tarefa Atualizada\",\n  \"responsavel\": \"Novo Responsável\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Endpoint de Autenticação de Usuário",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "https://desafio-fulllstack.onrender.com/auth/login",
+          "protocol": "https",
+          "host": [
+            "desafio-fulllstack",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"Bittenks2\",\n    \"password\": \"2204\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Endpoint de Criação de Usuário",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "https://desafio-fulllstack.onrender.com/auth/register",
+          "protocol": "https",
+          "host": [
+            "desafio-fulllstack",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"bittenks\",\n    \"password\": \"22\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Usuários",
+      "event": [],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "https://desafio-fulllstack.onrender.com/users",
+          "protocol": "https",
+          "host": [
+            "desafio-fulllstack",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "users"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "Visualizar Tarefas",
+      "event": [],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkJpdHRlbmtzMiIsInN1YiI6NiwiaWF0IjoxNzI4MTY0OTYzLCJleHAiOjE3MjgxNjg1NjN9.Z2FXbl4T0GeieK15PnMMR1H-owDU8XJD6nZukDTWPbE",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": null,
+        "description": "",
+        "url": {
+          "raw": "https://desafio-fulllstack.onrender.com/tasks",
+          "protocol": "https",
+          "host": [
+            "desafio-fulllstack",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "tasks"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    }
+  ],
+  "variable": []
+}
