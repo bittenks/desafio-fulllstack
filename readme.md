@@ -7,7 +7,7 @@ Seja bem-vindo(a)! Nessa etapa gostaríamos de conhecer melhor a sua criatividad
 
 ##  Descrição do Projeto
 
-Este é um projeto fullstack para gerenciamento de tarefas domésticas, desenvolvido como parte de um desafio técnico para a **Obuc Tech**. A aplicação permite designar tarefas a diferentes membros da família, com funcionalidades para criação, edição, visualização, e exclusão de tarefas.
+Este é um projeto fullstack para gerenciamento de tarefas domésticas, desenvolvido como parte de um desafio técnico para a **Obuc Tech**. A aplicação permite designar tarefas a diferentes usuários, com funcionalidades para criação, edição, visualização, e exclusão de tarefas.
 
 A aplicação é composta por uma API REST desenvolvida em **NestJS**, um front-end web em **Vite** utilizando **ShadcnUI**, e um aplicativo mobile em **React Native** com **React Native Paper**. Todas as interfaces consomem a API criada para gerenciar as tarefas, e estão hospedadas em ambientes na nuvem.
 
@@ -52,7 +52,7 @@ A versão mobile foi desenvolvida em **React Native**, utilizando a biblioteca d
 
 A aplicação mobile também está disponível no **Expo**, facilitando a execução em emuladores Android e dispositivos reais.
 
-## 🚀 Deploy
+##  Deploy
 
 As diferentes partes do projeto foram hospedadas na nuvem:
 
@@ -60,13 +60,13 @@ As diferentes partes do projeto foram hospedadas na nuvem:
 - **API Back-end**: Hospedado no [Render.com](https://render.com/)
 - **Mobile**: Utilizando o **Expo**, acessível através de emuladores ou dispositivos físicos.
 
-## ✨ Diferenciais Implementados
+## Diferenciais Implementados
 
 - **Deploy na Nuvem**: Todas as partes da aplicação foram hospedadas em ambientes acessíveis online, facilitando o acesso e a utilização do sistema.
 - **Testes Unitários**: Testes foram criados para os principais serviços do backend, garantindo estabilidade e confiabilidade.
 - **Suporte a Emulador Android**: A versão mobile foi configurada para rodar no Expo, sendo testada em emuladores Android.
 
-## 🛠️ Tecnologias Utilizadas
+##  Tecnologias Utilizadas
 
 ### Backend
 - **Node.js**
