@@ -45,13 +45,13 @@ describe('TaskController', () => {
 
   describe('createTask', () => {
     it('deve criar uma nova tarefa', async () => {
-      const mockTask: Task = { id: 1, descricao: 'Nova Tarefa', status: 'Não Iniciada', usuario: mockUser, responsavel: mockUser };
+      const mockTask: Task = { title: 'Nova Tarefa', id: 1, descricao: 'Nova Tarefa', status: 'Não Iniciada', usuario: mockUser, responsavel: mockUser };
       mockTaskService.createTask.mockResolvedValue(mockTask);
 
-      const body = { descricao: 'Nova Tarefa', responsavel: 1, status: 'Não Iniciada' };
+      const body = { title: 'Nova Tarefa', descricao: 'Nova Tarefa', responsavel: 1, status: 'Não Iniciada' };
       const result = await taskController.createTask(body, mockUser);
       expect(result).toEqual(mockTask);
-      expect(mockTaskService.createTask).toHaveBeenCalledWith(body.descricao, mockUser, body.responsavel, body.status);
+      expect(mockTaskService.createTask).toHaveBeenCalledWith(body.title, body.descricao, mockUser, body.responsavel, body.status);
     });
   });
 

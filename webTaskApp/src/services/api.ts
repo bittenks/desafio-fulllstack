@@ -72,7 +72,7 @@ export const loginUser = async (data: LoginData) => {
 };
 
 
-export const getTasks = async (token: string) => {
+export const getTasks = async (token: string): Promise<any[]> => {
   try {
     const response = await api.get<Task[]>('/tasks', {
       headers: { Authorization: `Bearer ${token}` },
@@ -80,8 +80,10 @@ export const getTasks = async (token: string) => {
     return response.data;
   } catch (error) {
     handleError(error);
+    return [];
   }
 };
+
 
 export const getUsers = async () => {
   try {

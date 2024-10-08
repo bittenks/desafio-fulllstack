@@ -13,15 +13,19 @@ describe('TaskService', () => {
   let userService: UserService;
 
   // Mock do repositório de tarefas
+  const mockQueryBuilder = {
+    leftJoinAndSelect: jest.fn().mockReturnThis(),
+    where: jest.fn().mockReturnThis(),
+    andWhere: jest.fn().mockReturnThis(),
+    getMany: jest.fn(),
+  };
+
   const mockTaskRepository = {
     create: jest.fn(),
     save: jest.fn(),
     findOne: jest.fn(),
     delete: jest.fn(),
-    createQueryBuilder: jest.fn().mockReturnThis(),
-    where: jest.fn().mockReturnThis(),
-    andWhere: jest.fn().mockReturnThis(),
-    getMany: jest.fn(),
+    createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder), // Mock do Query Builder
   };
 
   // Mock do usuário
@@ -75,7 +79,7 @@ describe('TaskService', () => {
       const status = 'Não Iniciada';
       const responsavelId = mockUser.id;
 
-      const mockTask = { id: 1, descricao, status, usuario: mockUser, responsavel: mockUser };
+      const mockTask = { id: 1, title, descricao, status, usuario: mockUser, responsavel: mockUser };
       mockTaskRepository.create.mockReturnValue(mockTask);
       mockTaskRepository.save.mockResolvedValue(mockTask);
 
@@ -87,7 +91,6 @@ describe('TaskService', () => {
 
     it('deve lançar NotFoundException se o responsável não for encontrado', async () => {
       const title = 'Titulo Nova Tarefa';
-
       const descricao = 'Nova Tarefa';
       const status = 'Não Iniciada';
       const responsavelId = 999; // Id de um usuário que não existe
@@ -129,21 +132,25 @@ describe('TaskService', () => {
 
   describe('getTasksByUser', () => {
     it('deve retornar todas as tarefas do usuário', async () => {
-      const tasks = [{ id: 1, descricao: 'Tarefa 1', usuario: mockUser }];
-      mockTaskRepository.getMany.mockResolvedValue(tasks);
+      const tasks = [{ title: 'tarefa 1', id: 1, descricao: 'Tarefa 1', usuario: mockUser }];
+
+      mockQueryBuilder.getMany.mockResolvedValue(tasks); // Mock do retorno das tarefas
 
       const result = await taskService.getTasksByUser(mockUser);
       expect(result).toEqual(tasks);
       expect(mockTaskRepository.createQueryBuilder).toHaveBeenCalled();
+      expect(mockQueryBuilder.leftJoinAndSelect).toHaveBeenCalledWith('task.responsavel', 'responsavel'); // Verifique se o join foi chamado
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith('task.usuarioId = :userId', { userId: mockUser.id }); // Verifique se a condição foi chamada
     });
 
     it('deve filtrar tarefas por status', async () => {
-      const tasks = [{ id: 1, descricao: 'Tarefa Filtrada', status: 'Em Andamento', usuario: mockUser }];
-      mockTaskRepository.getMany.mockResolvedValue(tasks);
+      const tasks = [{ title: 'Tarefa Filtrada', id: 1, descricao: 'Tarefa Filtrada', status: 'Em Andamento', usuario: mockUser }];
+
+      mockQueryBuilder.getMany.mockResolvedValue(tasks); // Mock do retorno das tarefas
 
       const result = await taskService.getTasksByUser(mockUser, 'Em Andamento');
       expect(result).toEqual(tasks);
-      expect(mockTaskRepository.andWhere).toHaveBeenCalledWith('task.status = :status', { status: 'Em Andamento' });
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith('task.status = :status', { status: 'Em Andamento' }); // Verifique se a filtragem por status foi chamada
     });
   });
 });

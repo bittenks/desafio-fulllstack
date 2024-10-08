@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, Text, ActivityIndicator, RefreshControl, ScrollView } from 'react-native';
 import { getTasks, updateTask } from '../api/api';
 import useAuth from '../hooks/useAuth';
-import { Button, IconButton } from 'react-native-paper';
+import { Button, IconButton, Card, Title, Paragraph } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
-import { AlertCircle, CheckCircle, Clock, Filter } from 'lucide-react-native';
+import { AlertCircle, CheckCircle, Clock } from 'lucide-react-native';
 import Toast from 'react-native-toast-message';
 
 const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
@@ -21,7 +21,7 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         setLoading(true);
         const response = await getTasks(token);
         setTasks(response.data);
-        setFilteredTasks(response.data); // Initially show all tasks
+        setFilteredTasks(tasks); // Initially show all tasks
       }
     } catch (error) {
       Toast.show({
@@ -46,7 +46,6 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const renderStatusIcon = (status: string) => {
     switch (status) {
       case 'Não Iniciada':
-      case 'Não iniciada':
         return <AlertCircle size={24} color="orange" />;
       case 'Em Andamento':
         return <Clock size={24} color="#044c78" />;
@@ -91,14 +90,12 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.filterContainer}>
-        <Text style={styles.filterLabel}>
-          Filtrar por Status:
-        </Text>
+        <Text style={styles.filterLabel}>Filtrar por Status:</Text>
         <Picker
           selectedValue={selectedStatus}
           style={styles.pickerFiltro}
           onValueChange={(itemValue) => setSelectedStatus(itemValue)}
-          mode='dropdown' 
+          mode='dropdown'
         >
           <Picker.Item label="Todas" value="Todas" />
           <Picker.Item label="Não Iniciada" value="Não Iniciada" />
@@ -119,35 +116,26 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         <FlatList
           data={filteredTasks}
           renderItem={({ item }) => (
-            <View style={styles.listItem}>
-              <View style={styles.itemContainer}>
-                <View style={styles.textContainer}>
-                  <View style={styles.header}>
-                    <View style={styles.iconAndTextContainer}>
-                      {renderStatusIcon(item.status)}
-                      <Text style={styles.titleText} numberOfLines={2}>{item.descricao}</Text>
-                    </View>
-                    <IconButton
-                      onPress={() => navigation.navigate('Detalhes da tarefa', { taskId: item.id })}
-                      disabled={item.status === 'Concluída'}
-                      icon={'square-edit-outline'}
-                      iconColor='#044c78'
-                      style={styles.editButton}
-                    />
+            <Card style={styles.card}>
+              <Card.Content>
+                <View style={styles.header}>
+                  <View style={styles.iconAndTextContainer}>
+                    {renderStatusIcon(item.status)}
+                    <Title style={styles.titleText}>{item.descricao}</Title>
                   </View>
-
-                  <Button
-                    mode="text"
-                    icon={'account'}
-                    textColor='#044c78'
-                    style={styles.responsavelButton}
-                  >
-                    {item.responsavel}
-                  </Button>
+                  <IconButton
+                    onPress={() => navigation.navigate('Detalhes da tarefa', { taskId: item.id })}
+                    disabled={item.status === 'Concluída'}
+                    icon={'square-edit-outline'}
+                    iconColor='#044c78'
+                    style={styles.editButton}
+                  />
                 </View>
-              </View>
-              <View style={styles.statusContainer}>
-                {item.status !== 'Concluída' ?
+                <Paragraph style={styles.detailsText}>Criado por: {item.usuario.username}</Paragraph>
+                <Paragraph style={styles.detailsText}>Responsável: {item.responsavel.username}</Paragraph>
+              </Card.Content>
+              <Card.Actions>
+                {item.status !== 'Concluída' ? (
                   <Picker
                     selectedValue={item.status}
                     style={styles.picker}
@@ -157,9 +145,12 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                     <Picker.Item label="Não Iniciada" value="Não Iniciada" />
                     <Picker.Item label="Em Andamento" value="Em Andamento" />
                     <Picker.Item label="Concluída" value="Concluída" />
-                  </Picker> : <Text>   {item.status}</Text>}
-              </View>
-            </View>
+                  </Picker>
+                ) : (
+                  <Text style={styles.completedText}>{item.status}</Text>
+                )}
+              </Card.Actions>
+            </Card>
           )}
           keyExtractor={(item) => item.id.toString()}
           refreshControl={
@@ -194,14 +185,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
-
   iconAndTextContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
     marginRight: 8,
   },
-
   titleText: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -209,11 +198,13 @@ const styles = StyleSheet.create({
     flex: 1,
     maxWidth: '80%',
   },
-
+  detailsText: {
+    fontSize: 14,
+    color: '#555',
+  },
   editButton: {
     alignSelf: 'flex-end',
   },
-
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -243,10 +234,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 20,
     fontSize: 16,
-
     color: '#888',
   },
-  listItem: {
+  card: {
     backgroundColor: '#ffffff',
     borderRadius: 10,
     marginBottom: 20,
@@ -254,28 +244,9 @@ const styles = StyleSheet.create({
     padding: 10,
     elevation: 1,
   },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 8,
+  completedText: {
+    color: '#28a745', // Cor verde para tarefas concluídas
   },
-  itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  textContainer: {
-    flex: 1,
-    paddingHorizontal: 8,
-  },
-
-  responsavelButton: {
-    alignSelf: 'flex-start',
-    paddingVertical: 0,
-    width: 'auto',
-  },
-
   createTaskButton: {
     backgroundColor: "#00be78",
     position: 'absolute',

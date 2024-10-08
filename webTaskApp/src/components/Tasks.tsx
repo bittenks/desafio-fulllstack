@@ -36,6 +36,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
+import { useNavigate } from "react-router-dom";
 
 export interface Task {
   title: string;
@@ -45,8 +46,13 @@ export interface Task {
     id: number; // ID do responsável
     username: string; // Nome do responsável
   };
+  usuario: {
+    id: number; // ID do responsável
+    username: string; // Nome do responsável
+  };
   status: string;
 }
+
 
 export default function Tasks() {
   const { token } = useAuth();
@@ -58,15 +64,21 @@ export default function Tasks() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
+  const [taskCriador, setTaskCriador] = useState<string>("");
+
   const [taskName, setTaskName] = useState<string>("");
   const [taskDescr, setTaskDescr] = useState<string>("");
+  const [taskStatus, setTaskStatus] = useState<string>("");
 
   const [responsibleId, setResponsibleId] = useState<string>("");
   const [status, setStatus] = useState<string>("");
   const [filterStatus, setFilterStatus] = useState<string>("Todos");
   const [users, setUsers] = useState<{ id: number; username: string }[]>([]);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchUsers = async () => {
+
       try {
         if (token) {
           const usersData = await getUsers();
@@ -87,7 +99,9 @@ export default function Tasks() {
         if (token) {
           setLoading(true);
           const tasksData = await getTasks(token);
-          setTasks(tasksData || []);
+          if (tasksData) {
+            setTasks(tasksData || []);
+          }
         }
       } catch (error) {
         setError("Erro ao buscar tarefas.");
@@ -102,7 +116,9 @@ export default function Tasks() {
     fetchUsers()
     fetchTasks();
   }, [token, toast]);
-
+  if (!token) {
+    navigate('/login'); // Redireciona para a página de login
+  }
   const filteredTasks = tasks.filter((task) =>
     filterStatus === "Todos" ? true : task.status === filterStatus
   );
@@ -110,9 +126,12 @@ export default function Tasks() {
   const handleOpenDialog = (task: Task | null = null) => {
     setTaskToEdit(task);
     if (task) {
-      setTaskName(task.descricao);
+      setTaskStatus(task.status) // status antes de atualizar
+      setTaskName(task.title);
+      setTaskCriador(task.usuario.username)
       setResponsibleId(task.responsavel.id.toString()); // Supondo que seja um ID
       setStatus(task.status);
+      setTaskDescr(task.descricao)
     } else {
       setTaskName("");
       setResponsibleId("");
@@ -128,23 +147,37 @@ export default function Tasks() {
 
   const handleSaveTask = async () => {
     try {
+      if (!taskName || !taskDescr || !responsibleId || !status) {
+        toast({
+          title: "Erro",
+          description: "Por favor, preencha todos os campos.",
+          variant: 'destructive'
+        });
+        return;
+      }
+
       if (token) {
         if (taskToEdit) {
-          await updateTask(taskToEdit.id, { descricao: taskName, responsavel: responsibleId, status }, token);
+          // Atualiza a tarefa existente
+          await updateTask(taskToEdit.id, { title: taskName, descricao: taskDescr, responsavel: responsibleId, status }, token);
           toast({
             title: "Sucesso",
             description: "Tarefa editada com sucesso.",
           });
         } else {
-          await createTask({ descricao: taskName, responsavel: responsibleId, status: status }, token);
+          // Cria uma nova tarefa
+          await createTask({ title: taskName, descricao: taskDescr, responsavel: responsibleId, status }, token);
           toast({
             title: "Sucesso",
             description: "Tarefa criada com sucesso.",
           });
         }
+
+        // Atualiza a lista de tarefas após a criação ou edição
         const tasksData = await getTasks(token);
         setTasks(tasksData ?? []);
       }
+
       handleCloseDialog();
     } catch (error) {
       toast({
@@ -153,6 +186,7 @@ export default function Tasks() {
       });
     }
   };
+
 
   const handleDeleteTask = (task: Task) => {
     setTaskToDelete(task);
@@ -253,7 +287,7 @@ export default function Tasks() {
                           onClick={() => handleOpenDialog(task)}
                           variant="outline"
                           className="text-primary hover:bg-primary/10"
-                          disabled={task.status === 'Concluída'}
+
                         >
                           <EditIcon className="w-4 h-4 mr-1" /> Editar
                         </Button>
@@ -273,6 +307,8 @@ export default function Tasks() {
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>{taskToEdit ? "Editar Tarefa" : "Criar Nova Tarefa"}</DialogTitle>
+                    <p className="font-thin italic">{taskToEdit ? `Criado por: ${taskCriador}` : ""}</p>
+
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
@@ -283,6 +319,7 @@ export default function Tasks() {
                         value={taskName}
                         onChange={(e) => setTaskName(e.target.value)}
                         required
+                        disabled={taskStatus === 'Concluída'}
                       />
                     </div>
                     <div>
@@ -292,12 +329,13 @@ export default function Tasks() {
                         value={taskDescr}
                         onChange={(e) => setTaskDescr(e.target.value)}
                         required
+                        disabled={taskStatus === 'Concluída'}
                       />
                     </div>
                     <div>
                       <Label htmlFor="responsibleId">Responsável</Label>
                       <Select value={responsibleId} onValueChange={setResponsibleId} required>
-                        <SelectTrigger className="border rounded p-2 w-full">
+                        <SelectTrigger className="border rounded p-2 w-full" disabled={taskStatus === 'Concluída'}>
                           <SelectValue placeholder="Selecione um responsável" />
                         </SelectTrigger>
                         <SelectContent>
@@ -310,7 +348,7 @@ export default function Tasks() {
                     <div>
                       <Label htmlFor="status">Status</Label>
                       <Select value={status} onValueChange={(value) => setStatus(value)} required>
-                        <SelectTrigger className="border rounded p-2 w-full">
+                        <SelectTrigger className="border rounded p-2 w-full" disabled={taskStatus === 'Concluída'}>
                           <SelectValue placeholder="Selecione o status" />
                         </SelectTrigger>
                         <SelectContent>
@@ -329,6 +367,7 @@ export default function Tasks() {
                       type="button"
                       onClick={handleSaveTask}
                       className="bg-secondary text-secondary-foreground"
+                      disabled={taskStatus === 'Concluída'}
                     >
                       {taskToEdit ? "Salvar" : "Criar"}
                     </Button>

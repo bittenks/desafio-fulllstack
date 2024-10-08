@@ -76,11 +76,12 @@ export class TaskService {
   // Método para obter tarefas do usuário, com possibilidade de filtrar por status
   async getTasksByUser(usuario: User, status?: string): Promise<Task[]> {
     const query = this.taskRepository.createQueryBuilder('task')
-      .leftJoinAndSelect('task.responsavel', 'responsavel') // Carregar a relação 'responsavel'
-      .where('task.usuarioId = :userId', { userId: usuario.id });
+      .leftJoinAndSelect('task.responsavel', 'responsavel')
+      .leftJoinAndSelect('task.usuario', 'usuario')
+      .where('task.usuarioId = :userId', { userId: usuario.id }); // Cláusula where para filtrar pelo usuário
 
     if (status) {
-      query.andWhere('task.status = :status', { status });
+      query.andWhere('task.status = :status', { status }); // Se um status for fornecido, filtra também por status
     }
 
     return query.getMany();
