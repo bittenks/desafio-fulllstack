@@ -139,8 +139,8 @@ describe('TaskService', () => {
       const result = await taskService.getTasksByUser(mockUser);
       expect(result).toEqual(tasks);
       expect(mockTaskRepository.createQueryBuilder).toHaveBeenCalled();
-      expect(mockQueryBuilder.leftJoinAndSelect).toHaveBeenCalledWith('task.responsavel', 'responsavel'); // Verifique se o join foi chamado
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith('task.usuarioId = :userId', { userId: mockUser.id }); // Verifique se a condição foi chamada
+      expect(mockQueryBuilder.leftJoinAndSelect).toHaveBeenCalledWith('task.responsavel', 'responsavel');
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith("task.usuarioId = :userId OR task.responsavelId = :userId", { userId: mockUser.id });
     });
 
     it('deve filtrar tarefas por status', async () => {
