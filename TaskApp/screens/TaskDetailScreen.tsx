@@ -17,19 +17,19 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
   const [descricao, setDescricao] = useState<string>('');
   const [titulo, setTitulo] = useState<string>('');
   const [status, setStatus] = useState<string>('');
-  const [statusTask, setStatusTask] = useState<string>(''); // status da task antes de atualizar
+  const [statusTask, setStatusTask] = useState<string>('');
 
   const [usuarios, setUsuarios] = useState<any[]>([]);
   const { token } = useAuth();
 
   const fetchData = async () => {
-    setLoading(true);  // Ativar o estado de carregamento
+    setLoading(true);
     if (token && taskId) {
       try {
-        // Carregar tarefa e usuários ao mesmo tempo
+
         const [taskResponse, usersResponse] = await Promise.all([
-          getTaskById(taskId, token),  // Busca detalhes da tarefa
-          getUsers(),                  // Busca lista de usuários
+          getTaskById(taskId, token),
+          getUsers(),
         ]);
         setTask(taskResponse);
         setResponsavel(taskResponse?.responsavel?.id);
@@ -44,7 +44,7 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
         console.error('Erro ao carregar dados:', error);
         Alert.alert('Erro', 'Falha ao carregar os dados. Por favor, tente novamente.');
       } finally {
-        setLoading(false);  // Desativar o estado de carregamento
+        setLoading(false);
       }
     }
   };
@@ -83,7 +83,7 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
       }
     }
   };
-  // Função para definir o estilo do Card com base no status
+
   const getCardStyle = (status: string) => {
     return {
       backgroundColor: getBackgroundColor(status),
@@ -92,25 +92,27 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
       width: 150,
       marginTop: 15,
       height: 30,
+      fontFamily: 'Geologica',
+
       padding: 4,
-      justifyContent: 'center',  // Centraliza verticalmente
-      alignItems: 'center',  // Centraliza horizontalmente
-      color: '#fff', // Texto branco para contraste
+      justifyContent: 'center',
+      alignItems: 'center',
+      color: '#fff',
       fontWeight: 'bold',
-      fontSize: 14, // Tamanho do texto ajustado para caber no card
+      fontSize: 14,
       textAlign: 'center',
     };
   };
   const getBackgroundColor = (status: string) => {
     switch (status) {
       case 'Não Iniciada':
-        return '#fbbf24'; // amarelo
+        return '#fbbf24';
       case 'Em Andamento':
-        return '#084c6c'; // azul escuro
+        return '#084c6c';
       case 'Concluída':
-        return '#10b981'; // verde
+        return '#10b981';
       default:
-        return '#9ca3af'; // cinza para status desconhecido
+        return '#9ca3af';
     }
   };
 
@@ -128,7 +130,7 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
   };
 
   useEffect(() => {
-    fetchData();  // Chamar função para buscar dados ao carregar o componente
+    fetchData();
   }, [token, taskId]);
 
   if (loading) {
@@ -146,7 +148,7 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
         <Card style={styles.card}>
           <Card.Content>
             <View style={styles.header}>
-              <Text style={styles.title}>Detalhes da Tarefa</Text>
+              <Text style={styles.title}>Tarefa ID :{taskId}</Text>
               <IconButton
                 mode='outlined'
                 icon="trash-can"
@@ -258,38 +260,53 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    fontFamily: 'Geologica',
+
   },
   loadingText: {
     marginTop: 12,
     fontSize: 16,
+    fontFamily: 'Geologica',
+
   },
   card: {
     padding: 16,
     borderRadius: 8,
     elevation: 2,
+    fontFamily: 'Geologica',
+
     backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20, // Aumentar espaçamento entre o título e o restante
+    fontFamily: 'Geologica',
+
+    marginBottom: 20,
   },
   title: {
     fontSize: 20,
+    fontFamily: 'Geologica',
+
     fontWeight: 'bold',
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 12, // Mais espaçamento entre os campos
+    fontFamily: 'Geologica',
+
+    marginTop: 12,
   },
   valueText: {
+    fontFamily: 'Geologica',
+
     fontSize: 16,
-    marginBottom: 10, // Espaçamento adicional entre valores
+    marginBottom: 10,
   },
   labelTitle: {
     fontSize: 18,
+    fontFamily: 'Geologica-Bold',
     fontWeight: 'bold',
     marginTop: 8,
   },
@@ -301,7 +318,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     borderRadius: 50,
-    marginBottom: 12, // Espaçamento para o picker
+    marginBottom: 12,
   },
   updateButton: {
     marginTop: 20,

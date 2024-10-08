@@ -93,12 +93,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 24,
     color: '#044c78',
+    fontFamily: 'Geologica-Bold', 
   },
   subtitle: {
     textAlign: 'center',
     marginBottom: 24,
     fontSize: 16,
     color: '#555',
+    fontFamily: 'Geologica', 
   },
   input: {
     backgroundColor: '#fff',
@@ -109,6 +111,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#04c074"
   },
   registerButton: {
+    fontFamily: 'Geologica', 
     color: "#044c78",
     alignSelf: 'center',
   },

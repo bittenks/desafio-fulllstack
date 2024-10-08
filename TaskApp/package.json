@@ -27,7 +27,9 @@
     "react-native-screens": "3.31.1",
     "react-native-toast-message": "^2.2.1",
     "react-native-vector-icons": "^10.2.0",
-    "expo-updates": "~0.25.26"
+    "expo-updates": "~0.25.26",
+    "expo-font": "~12.0.10",
+    "expo-splash-screen": "~0.27.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -3,7 +3,9 @@ import Toast from 'react-native-toast-message';
 
 // URL base da API
 const api = axios.create({
-  baseURL: 'http://192.168.15.42:3000', // Seu IP local
+  // baseURL: 'http://x:3000', // Seu IP local
+  baseURL: 'https://desafio-fulllstack.onrender.com', // Seu IP local
+
 });
 
 
@@ -32,7 +34,6 @@ interface User { // Interface para usuário
 
 // Função para tratar erros
 const handleError = (error: any) => {
-  console.error('Erro ocorrido:', error);
   let message = 'Ocorreu um erro inesperado.';
 
   if (error.response) {

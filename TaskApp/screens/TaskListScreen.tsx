@@ -183,12 +183,14 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#f5f5f5',
+    fontFamily: 'Geologica', 
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
+    fontFamily: 'Geologica', 
   },
   iconAndTextContainer: {
     alignItems: 'flex-start',
@@ -201,11 +203,13 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     flex: 1,
     color: '#333',
+    fontFamily: 'Geologica', 
   },
   detailsText: {
     fontSize: 14,
     marginLeft: 5,
     color: '#777',
+    fontFamily: 'Geologica', 
   },
   editButton: {
     alignSelf: 'flex-end',
@@ -219,6 +223,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    fontFamily: 'Geologica', 
 
     marginBottom: 15,
     paddingHorizontal: 10,
@@ -236,6 +241,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginRight: 8,
     marginLeft: 10,
+    fontFamily: 'Geologica', 
 
     color: '#333',
   },
@@ -243,11 +249,13 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 50,
     alignSelf: 'center',
+    fontFamily: 'Geologica', 
   },
   pickerFiltro: {
     width: '80%',
     height: 50,
     alignSelf: 'center',
+    fontFamily: 'Geologica', 
   },
   card: {
     backgroundColor: '#ffffff',
@@ -260,10 +268,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 4,
+    fontFamily: 'Geologica', 
   },
   completedText: {
     color: '#28a745',
     fontWeight: 'bold',
+    fontFamily: 'Geologica', 
   },
   createTaskButton: {
     backgroundColor: "#28a745",
@@ -274,6 +284,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     padding: 10,
     elevation: 3,
+    fontFamily: 'Geologica', 
   },
   createTaskIconButton: {
     backgroundColor: "#28a745",
@@ -282,6 +293,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     right: 16,
     borderRadius: 50,
+    fontFamily: 'Geologica-Bold', 
     elevation: 3,
   },
 });
