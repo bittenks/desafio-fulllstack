@@ -11,15 +11,15 @@ const TaskFormScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   const [responsavel, setResponsavel] = useState('');
   const [status, setStatus] = useState('Não Iniciada');
-  const [usuarios, setUsuarios] = useState<any[]>([]); // Para armazenar a lista de usuários
+  const [usuarios, setUsuarios] = useState<any[]>([]);
   const { token } = useAuth();
 
-  // Função para buscar usuários
+
   const fetchUsers = async () => {
     try {
       if (token) {
-        const response = await getUsers(); // Chame sua API para buscar usuários
-        setUsuarios(response || []); // Armazene os usuários na state
+        const response = await getUsers();
+        setUsuarios(response || []);
       }
     } catch (error) {
       Alert.alert('Erro', 'Falha ao carregar usuários.');
@@ -27,7 +27,7 @@ const TaskFormScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    fetchUsers(); // Chame a função ao montar o componente
+    fetchUsers();
   }, [token]);
 
   const handleCreateTask = async () => {

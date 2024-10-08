@@ -4,7 +4,7 @@ import Toast from 'react-native-toast-message';
 // URL base da API
 const api = axios.create({
   // baseURL: 'http://x:3000', // Seu IP local
-  baseURL: 'https://desafio-fulllstack.onrender.com', // Seu IP local
+  baseURL: 'https://desafio-fulllstack.onrender.com', //hospedado na nuvem
 
 });
 
