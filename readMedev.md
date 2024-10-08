@@ -1,16 +1,12 @@
 # Desafio FullStack
 
-## 📋 Descrição do Projeto
+##  Descrição do Projeto
 
 Este é um projeto fullstack para gerenciamento de tarefas domésticas, desenvolvido como parte de um desafio técnico para a **Obuc Tech**. A aplicação permite designar tarefas a diferentes membros da família, com funcionalidades para criação, edição, visualização, e exclusão de tarefas.
 
 A aplicação é composta por uma API REST desenvolvida em **NestJS**, um front-end web em **Vite** utilizando **ShadcnUI**, e um aplicativo mobile em **React Native** com **React Native Paper**. Todas as interfaces consomem a API criada para gerenciar as tarefas, e estão hospedadas em ambientes na nuvem.
 
-### 🎨 Design
-
-O design do projeto segue a identidade visual da **Obuc Tech**, utilizando suas **cores** e **fontes** oficiais para garantir uma experiência alinhada com a marca.
-
-## 🌐 Links do Projeto
+##  Links do Projeto
 
 - **Front-end Web**: [Acesse aqui no Netlify](https://desafiofullstackbittencourt.netlify.app/)
 - **Back-end API**: [Acesse aqui no Render.com](https://dashboard.render.com/web/srv-cs0oi2btq21c73ehbg4g)
@@ -32,9 +28,6 @@ A API foi desenvolvida utilizando **Node.js**, **Typescript**, e **NestJS**. As 
 
 - **Banco de Dados**: Pode ser configurado com qualquer banco relacional ou não-relacional à sua escolha.
 
-#### 🧪 Testes
-
-Foram implementados testes unitários nos **services de User, Auth, e Task** para garantir a estabilidade e confiabilidade das funcionalidades principais da aplicação.
 
 ### Front-end Web
 
@@ -89,7 +82,7 @@ As diferentes partes do projeto foram hospedadas na nuvem:
 ### Design
 - **Fontes e Cores da Obuc Tech**: Utilizei  as cores e tipografia oficiais da **Obuc Tech** de acordo com a nova identidade visual que consistente em todas as plataformas.
 
-## 📝 Como Executar o Projeto Localmente
+## Como Executar o Projeto Localmente
 
 ### Pré-requisitos
 
