@@ -12,7 +12,6 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
   const [loading, setLoading] = useState<boolean>(true);
   const [responsavel, setResponsavel] = useState<string>('');
   const [criadoPor, setCriadoPor] = useState<string>('');
-
   const [responsavelName, setResponsavelName] = useState<string>('');
   const [descricao, setDescricao] = useState<string>('');
   const [titulo, setTitulo] = useState<string>('');
@@ -32,17 +31,17 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
           getUsers(),
         ]);
         setTask(taskResponse);
-        setResponsavel(taskResponse?.responsavel?.id);
-        setResponsavelName(taskResponse?.responsavel?.username);
-        setCriadoPor(taskResponse?.usuario?.username);
-        setStatusTask(taskResponse?.status || '')
-        setStatus(taskResponse?.status || '');
-        setDescricao(taskResponse?.descricao || '');
-        setTitulo(taskResponse?.title || '');
+        setResponsavel(task?.responsavel?.id);
+        setResponsavelName(task?.responsavel?.username);
+        setCriadoPor(task?.usuario?.username);
+        setStatusTask(task?.status || '')
+        setStatus(task?.status || '');
+        setDescricao(task?.descricao || '');
+        setTitulo(task?.title || '');
         setUsuarios(usersResponse || []);
       } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-        Alert.alert('Erro', 'Falha ao carregar os dados. Por favor, tente novamente.');
+        console.log(error)
+
       } finally {
         setLoading(false);
       }
@@ -56,8 +55,7 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
         await updateTask(taskId, { title: titulo, descricao, responsavel, status }, token);
         navigation.navigate('Lista de Tarefas');
       } catch (error) {
-        console.error('Erro ao atualizar a tarefa:', error);
-        Alert.alert('Erro', 'Falha ao atualizar a tarefa.');
+        console.log(error)
       }
     }
   };

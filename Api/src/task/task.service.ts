@@ -43,7 +43,7 @@ export class TaskService {
         throw new BadRequestException('Tarefa não encontrada.');
       }
 
-      if (!task.usuario || task.usuario.id !== usuario.id) {
+      if (task.usuario.id !== usuario.id && task.responsavel?.id !== usuario.id) {
         throw new BadRequestException('Você não tem permissão para editar esta tarefa.');
       }
 

@@ -24,7 +24,7 @@ interface Task {
   title: string;
   descricao: string;
   status: string;
-  responsavel: string;
+  responsavel?: any;
 }
 
 interface User { // Interface para usuário
@@ -130,7 +130,7 @@ export const updateTask = async (id: number, data: Partial<Task>, token: string)
     showToast('success', 'Sucesso', 'Tarefa atualizada com sucesso!');
     return response.data;
   } catch (error) {
-    handleError(error);
+    throw new Error('Você não tem permissão para editar esta tarefa.'); 
   }
 };
 
@@ -149,7 +149,7 @@ export const deleteTask = async (id: number, token: string) => {
 
 
 // Função para obter uma tarefa específica pelo ID
-export const getTaskById = async (id: number, token: string): Promise<{ task: Task; assignedTasks?: Task[] }> => {
+export const getTaskById = async (id: number, token: string): Promise<any[]> => {
   // Validação do ID
   if (!id || id <= 0) {
     throw new Error('ID inválido fornecido.');
