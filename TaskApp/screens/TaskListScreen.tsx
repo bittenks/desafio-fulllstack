@@ -43,7 +43,7 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     filterTasks(selectedStatus);
   }, [tasks, selectedStatus]);
 
-  // Função para definir o estilo do Card com base no status
+  
   const getCardStyle = (status: string) => {
     return {
       backgroundColor: getBackgroundColor(status) || '',
@@ -53,11 +53,11 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       marginTop: 15,
       height: 30,
       padding: 4,
-      justifyContent: 'center',  // Centraliza verticalmente
-      alignItems: 'center',  // Centraliza horizontalmente
-      color: '#fff', // Texto branco para contraste
+      justifyContent: 'center',  
+      alignItems: 'center',  
+      color: '#fff', 
       fontWeight: 800,
-      fontSize: 14, // Tamanho do texto ajustado para caber no card
+      fontSize: 14, 
       textAlign: 'center',
     };
   };
@@ -65,13 +65,13 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const getBackgroundColor = (status: string) => {
     switch (status) {
       case 'Não Iniciada':
-        return '#fbbf24'; // amarelo
+        return '#fbbf24'; 
       case 'Em Andamento':
-        return '#084c6c'; // azul escuro
+        return '#084c6c'; 
       case 'Concluída':
-        return '#10b981'; // verde
+        return '#10b981'; 
       default:
-        return '#9ca3af'; // cinza para status desconhecido
+        return '#9ca3af'; 
     }
   };
 
@@ -177,20 +177,18 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   );
 };
 
-// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
     backgroundColor: '#f5f5f5',
-    fontFamily: 'Geologica', 
+    fontFamily: 'Geologica-Regular', 
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
-    fontFamily: 'Geologica', 
   },
   iconAndTextContainer: {
     alignItems: 'flex-start',
@@ -203,13 +201,13 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     flex: 1,
     color: '#333',
-    fontFamily: 'Geologica', 
+    fontFamily: 'Geologica-Bold',
   },
   detailsText: {
     fontSize: 14,
     marginLeft: 5,
     color: '#777',
-    fontFamily: 'Geologica', 
+    fontFamily: 'Geologica-Regular', 
   },
   editButton: {
     alignSelf: 'flex-end',
@@ -223,8 +221,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    fontFamily: 'Geologica', 
-
     marginBottom: 15,
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -241,21 +237,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginRight: 8,
     marginLeft: 10,
-    fontFamily: 'Geologica', 
-
     color: '#333',
+    fontFamily: 'Geologica-Bold',
   },
   picker: {
     width: '80%',
     height: 50,
     alignSelf: 'center',
-    fontFamily: 'Geologica', 
+    fontFamily: 'Geologica-Regular', 
   },
   pickerFiltro: {
     width: '80%',
     height: 50,
     alignSelf: 'center',
-    fontFamily: 'Geologica', 
+    fontFamily: 'Geologica-Regular', 
   },
   card: {
     backgroundColor: '#ffffff',
@@ -268,12 +263,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 4,
-    fontFamily: 'Geologica', 
   },
   completedText: {
     color: '#28a745',
     fontWeight: 'bold',
-    fontFamily: 'Geologica', 
+    fontFamily: 'Geologica-Bold', 
   },
   createTaskButton: {
     backgroundColor: "#28a745",
@@ -284,7 +278,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     padding: 10,
     elevation: 3,
-    fontFamily: 'Geologica', 
+    fontFamily: 'Geologica-Bold', 
   },
   createTaskIconButton: {
     backgroundColor: "#28a745",
@@ -293,8 +287,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     right: 16,
     borderRadius: 50,
-    fontFamily: 'Geologica-Bold', 
     elevation: 3,
+    fontFamily: 'Geologica-Bold', 
   },
 });
 

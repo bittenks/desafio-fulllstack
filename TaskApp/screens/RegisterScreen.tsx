@@ -105,17 +105,22 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: '#fff',
     marginBottom: 12,
+    fontFamily: 'Geologica',
+    fontSize: 16,
   },
   button: {
     marginBottom: 12,
-    backgroundColor: "#04c074"
+    backgroundColor: "#04c074",
+    fontFamily: 'Geologica',
   },
   registerButton: {
     fontFamily: 'Geologica', 
     color: "#044c78",
     alignSelf: 'center',
+    fontSize: 16, 
   },
 });
+
 
 const inputTheme = {
   colors: {

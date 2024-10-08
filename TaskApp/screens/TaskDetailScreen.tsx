@@ -25,23 +25,26 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
     setLoading(true);
     if (token && taskId) {
       try {
-
         const [taskResponse, usersResponse] = await Promise.all([
           getTaskById(taskId, token),
           getUsers(),
         ]);
-        setTask(taskResponse);
-        setResponsavel(task?.responsavel?.id);
-        setResponsavelName(task?.responsavel?.username);
-        setCriadoPor(task?.usuario?.username);
-        setStatusTask(task?.status || '')
-        setStatus(task?.status || '');
-        setDescricao(task?.descricao || '');
-        setTitulo(task?.title || '');
+
+        
+        if (taskResponse) {
+          setTask(taskResponse);
+          setResponsavel(taskResponse.responsavel?.id || ''); 
+          setResponsavelName(taskResponse.responsavel?.username || '');
+          setCriadoPor(taskResponse.usuario?.username || '');
+          setStatusTask(taskResponse.status || '');
+          setStatus(taskResponse.status || '');
+          setDescricao(taskResponse.descricao || '');
+          setTitulo(taskResponse.title || '');
+        }
+
         setUsuarios(usersResponse || []);
       } catch (error) {
-        console.log(error)
-
+        console.log(error);
       } finally {
         setLoading(false);
       }
@@ -202,11 +205,9 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
                 style={styles.picker}
                 onValueChange={(itemValue) => setResponsavel(itemValue)}
                 mode='dropdown'
-
               >
                 {usuarios.map((usuario) => (
-                  <Picker.Item key={usuario.id} label={usuario.username} value={usuario.id.toString()}
-
+                  <Picker.Item key={usuario.id} label={usuario.username} value={usuario.id}
                   />
                 ))}
               </Picker>
@@ -253,75 +254,69 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 12,
     backgroundColor: '#f5f5f5',
+    fontFamily: 'Geologica-Regular', 
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    fontFamily: 'Geologica',
-
   },
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-    fontFamily: 'Geologica',
-
+    fontFamily: 'Geologica-Regular', 
   },
   card: {
     padding: 16,
     borderRadius: 8,
     elevation: 2,
-    fontFamily: 'Geologica',
-
     backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    fontFamily: 'Geologica',
-
     marginBottom: 20,
   },
   title: {
     fontSize: 20,
-    fontFamily: 'Geologica',
-
-    fontWeight: 'bold',
+    fontFamily: 'Geologica-Bold', 
+    fontWeight: 'bold', 
   },
   label: {
     fontSize: 16,
-    fontWeight: 'bold',
-    fontFamily: 'Geologica',
-
+    fontFamily: 'Geologica-Bold', 
+    fontWeight: 'bold', 
     marginTop: 12,
   },
   valueText: {
-    fontFamily: 'Geologica',
-
     fontSize: 16,
+    fontFamily: 'Geologica-Regular', 
     marginBottom: 10,
   },
   labelTitle: {
     fontSize: 18,
-    fontFamily: 'Geologica-Bold',
-    fontWeight: 'bold',
+    fontFamily: 'Geologica-Bold', 
+    fontWeight: 'bold', 
     marginTop: 8,
   },
   input: {
     marginBottom: 16,
     backgroundColor: '#fff',
+    fontFamily: 'Geologica-Regular', 
   },
   picker: {
     height: 50,
     width: '100%',
     borderRadius: 50,
     marginBottom: 12,
+    fontFamily: 'Geologica-Regular', 
   },
   updateButton: {
     marginTop: 20,
     backgroundColor: "#04c074",
   },
 });
+
 
 export default TaskDetailScreen;

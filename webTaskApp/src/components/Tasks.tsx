@@ -134,7 +134,11 @@ export default function Tasks() {
       setTaskDescr(task.descricao)
     } else {
       setTaskName("");
+      setTaskCriador("");
+      setTaskStatus("")
+      setTaskDescr("")
       setResponsibleId("");
+      setTaskStatus('')
       setStatus("Não Iniciada");
     }
     setIsDialogOpen(true);
@@ -207,7 +211,7 @@ export default function Tasks() {
       } catch (error) {
         toast({
           title: "Erro",
-          description: "Erro ao excluir a tarefa.",
+          description: "Erro ao excluir a tarefa. Somente quem criou pode excluir",
         });
       } finally {
         setIsDeleteDialogOpen(false);

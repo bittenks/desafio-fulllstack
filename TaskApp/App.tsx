@@ -4,12 +4,13 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import AppNavigator from './navigation/AppNavigator';
 
+
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    'Geologica-Regular': require('./assets/fonts/Geologica-Regular.ttf'),  // Substitua pelo caminho correto
-    'Geologica-Bold': require('./assets/fonts/Geologica-Bold.ttf'),  // Caso tenha diferentes pesos, como bold
+    'Geologica': require('./assets/fonts/Geologica-Regular.ttf'),
+    'Geologica-Bold': require('./assets/fonts/Geologica-Bold.ttf'),
   });
 
 
@@ -18,6 +19,7 @@ export default function App() {
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
+
 
   if (!fontsLoaded) {
     return null;

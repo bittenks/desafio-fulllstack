@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginBottom: 12,
     fontFamily: 'Geologica',
+    fontSize: 16,
   },
   button: {
     marginBottom: 12,
@@ -111,7 +112,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Geologica',
   },
 });
-
 const inputTheme = {
   colors: {
     primary: '#044c78',
@@ -120,5 +120,6 @@ const inputTheme = {
     error: '#B00020',
   },
 };
+
 
 export default LoginScreen;
