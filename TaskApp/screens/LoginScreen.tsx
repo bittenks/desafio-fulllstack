@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   input: {
+    backgroundColor: '#fff',
     marginBottom: 12,
   },
   button: {

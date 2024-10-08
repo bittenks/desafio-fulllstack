@@ -3,11 +3,10 @@ import Toast from 'react-native-toast-message';
 
 // URL base da API
 const api = axios.create({
-  // baseURL: 'http://localhost:3000',
   baseURL: 'http://192.168.15.42:3000', // Seu IP local
 });
 
-// Interfaces para os dados
+
 interface RegisterData {
   username: string;
   password: string;
@@ -20,39 +19,42 @@ interface LoginData {
 
 interface Task {
   id: number;
+  title: string;
   descricao: string;
   status: string;
-  responsavel: {
-    username: string;
-  };
+  responsavel: string;
+}
+
+interface User { // Interface para usuário
+  id: number;
+  username: string;
 }
 
 // Função para tratar erros
 const handleError = (error: any) => {
-  console.error('Error occurred:', error);
+  console.error('Erro ocorrido:', error);
+  let message = 'Ocorreu um erro inesperado.';
+
   if (error.response) {
-    Toast.show({
-      type: 'error',
-      text1: 'Erro',
-      text2: error.response.data.message || 'Ocorreu um erro inesperado.',
-      position: 'top',
-    });
+    message = error.response.data.message || message;
+    showToast('error', 'Erro', message);
   } else if (error.request) {
-    Toast.show({
-      type: 'error',
-      text1: 'Erro de Rede',
-      text2: 'Nenhuma resposta recebida.',
-      position: 'top',
-    });
+    showToast('error', 'Erro de Rede', 'Nenhuma resposta recebida.');
   } else {
-    Toast.show({
-      type: 'error',
-      text1: 'Erro',
-      text2: error.message,
-      position: 'top',
-    });
+    showToast('error', 'Erro', error.message);
   }
-  throw error;
+
+  throw error; // Propaga o erro para quem chamou
+};
+
+// Função auxiliar para exibir Toasts
+const showToast = (type: 'success' | 'error', text1: string, text2: string) => {
+  Toast.show({
+    type,
+    text1,
+    text2,
+    position: 'top',
+  });
 };
 
 // Interceptores para gerenciar a resposta
@@ -60,7 +62,7 @@ api.interceptors.response.use(
   response => response,
   error => {
     handleError(error);
-    throw error;
+    return Promise.reject(error); // Certifique-se de que o erro seja tratado em outro lugar se necessário
   }
 );
 
@@ -71,12 +73,7 @@ export const registerUser = async (data: RegisterData) => {
       throw new Error('Username e senha são obrigatórios');
     }
     const response = await api.post('/auth/register', data);
-    Toast.show({
-      type: 'success',
-      text1: 'Sucesso',
-      text2: 'Usuário registrado com sucesso!',
-      position: 'top',
-    });
+    showToast('success', 'Sucesso', 'Usuário registrado com sucesso!');
     return response.data;
   } catch (error) {
     handleError(error);
@@ -90,12 +87,7 @@ export const loginUser = async (data: LoginData) => {
       throw new Error('Username e senha são obrigatórios');
     }
     const response = await api.post('/auth/login', data);
-    Toast.show({
-      type: 'success',
-      text1: 'Sucesso',
-      text2: 'Login realizado com sucesso!',
-      position: 'top',
-    });
+    showToast('success', 'Sucesso', 'Login realizado com sucesso!');
     return response.data;
   } catch (error) {
     handleError(error);
@@ -103,7 +95,7 @@ export const loginUser = async (data: LoginData) => {
 };
 
 // Função para obter tarefas
-export const getTasks = async (token: string) => {
+export const getTasks = async (token: string): Promise<any[]> => {
   try {
     const response = await api.get<Task[]>('/tasks', {
       headers: { Authorization: `Bearer ${token}` },
@@ -111,6 +103,7 @@ export const getTasks = async (token: string) => {
     return response.data;
   } catch (error) {
     handleError(error);
+    return [];
   }
 };
 
@@ -120,12 +113,7 @@ export const createTask = async (data: Omit<Task, 'id'>, token: string) => {
     const response = await api.post('/tasks', data, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    Toast.show({
-      type: 'success',
-      text1: 'Sucesso',
-      text2: 'Tarefa criada com sucesso!',
-      position: 'top',
-    });
+    showToast('success', 'Sucesso', 'Tarefa criada com sucesso!');
     return response.data;
   } catch (error) {
     handleError(error);
@@ -138,12 +126,7 @@ export const updateTask = async (id: number, data: Partial<Task>, token: string)
     const response = await api.patch(`/tasks/${id}`, data, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    Toast.show({
-      type: 'success',
-      text1: 'Sucesso',
-      text2: 'Tarefa atualizada com sucesso!',
-      position: 'top',
-    });
+    showToast('success', 'Sucesso', 'Tarefa atualizada com sucesso!');
     return response.data;
   } catch (error) {
     handleError(error);
@@ -156,26 +139,39 @@ export const deleteTask = async (id: number, token: string) => {
     await api.delete(`/tasks/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    Toast.show({
-      type: 'success',
-      text1: 'Sucesso',
-      text2: 'Tarefa deletada com sucesso!',
-      position: 'top',
-    });
+    showToast('success', 'Sucesso', 'Tarefa deletada com sucesso!');
   } catch (error) {
-    handleError(error);
+    throw new Error('Você não tem permissão para deletar esta tarefa.'); // Propaga o erro
+
   }
 };
 
-// Função para obter uma tarefa pelo ID
-export const getTaskById = async (id: number, token: string) => {
+
+// Função para obter uma tarefa específica pelo ID
+export const getTaskById = async (id: number, token: string): Promise<{ task: Task; assignedTasks?: Task[] }> => {
+  // Validação do ID
+  if (!id || id <= 0) {
+    throw new Error('ID inválido fornecido.');
+  }
   try {
-    const response = await api.get<Task>(`/tasks/${id}`, {
+    const response = await api.get(`/tasks/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
   } catch (error) {
+    console.error('Erro ao carregar dados da tarefa:', error);
     handleError(error);
+    throw new Error('Falha ao carregar os dados.'); // Propaga o erro
   }
 };
 
+
+// Função para obter a lista de usuários
+export const getUsers = async () => {
+  try {
+    const response = await api.get<User[]>('/users')
+    return response.data; // Retorna a lista de usuários
+  } catch (error) {
+    handleError(error);
+  }
+};

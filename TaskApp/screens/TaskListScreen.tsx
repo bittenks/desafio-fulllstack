@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList, Text, ActivityIndicator, RefreshControl, ScrollView } from 'react-native';
+import { View, StyleSheet, FlatList, Text, ActivityIndicator, RefreshControl } from 'react-native';
 import { getTasks, updateTask } from '../api/api';
 import useAuth from '../hooks/useAuth';
 import { Button, IconButton, Card, Title, Paragraph } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
-import { AlertCircle, CheckCircle, Clock } from 'lucide-react-native';
 import Toast from 'react-native-toast-message';
 
 const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
@@ -16,13 +15,14 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { token } = useAuth();
 
   const fetchTasks = async () => {
+    if (!token) return;
+
+    setLoading(true);
     try {
-      if (token) {
-        setLoading(true);
-        const response = await getTasks(token);
-        setTasks(response.data);
-        setFilteredTasks(tasks); // Initially show all tasks
-      }
+      const response = await getTasks(token);
+      const taskList = response || [];
+      setTasks(taskList);
+      setFilteredTasks(taskList);
     } catch (error) {
       Toast.show({
         type: 'error',
@@ -43,39 +43,55 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     filterTasks(selectedStatus);
   }, [tasks, selectedStatus]);
 
-  const renderStatusIcon = (status: string) => {
+  // Função para definir o estilo do Card com base no status
+  const getCardStyle = (status: string) => {
+    return {
+      backgroundColor: getBackgroundColor(status) || '',
+      borderColor: getBorderColor(status) || '',
+      borderRadius: 10,
+      width: 150,
+      marginTop: 15,
+      height: 30,
+      padding: 4,
+      justifyContent: 'center',  // Centraliza verticalmente
+      alignItems: 'center',  // Centraliza horizontalmente
+      color: '#fff', // Texto branco para contraste
+      fontWeight: 800,
+      fontSize: 14, // Tamanho do texto ajustado para caber no card
+      textAlign: 'center',
+    };
+  };
+
+  const getBackgroundColor = (status: string) => {
     switch (status) {
       case 'Não Iniciada':
-        return <AlertCircle size={24} color="orange" />;
+        return '#fbbf24'; // amarelo
       case 'Em Andamento':
-        return <Clock size={24} color="#044c78" />;
+        return '#084c6c'; // azul escuro
       case 'Concluída':
-        return <CheckCircle size={24} color="green" />;
+        return '#10b981'; // verde
       default:
-        return null;
+        return '#9ca3af'; // cinza para status desconhecido
     }
   };
 
-  const handleUpdateStatus = async (itemId: number, newStatus: string) => {
-    try {
-      await updateTask(itemId, { status: newStatus }, token);
-      fetchTasks(); // Refetch tasks after updating
-    } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: 'Erro',
-        text2: 'Falha ao atualizar status da tarefa.',
-      });
+  const getBorderColor = (status: string) => {
+    switch (status) {
+      case 'Não Iniciada':
+        return '#f59e0b';
+      case 'Em Andamento':
+        return '#083c5b';
+      case 'Concluída':
+        return '#0e9e72';
+      default:
+        return '#6b7280';
     }
   };
+
 
   const filterTasks = (status: string) => {
-    if (status === 'Todas') {
-      setFilteredTasks(tasks);
-    } else {
-      const filtered = tasks.filter((task) => task.status === status);
-      setFilteredTasks(filtered);
-    }
+    const filtered = status === 'Todas' ? tasks : tasks.filter(task => task.status === status);
+    setFilteredTasks(filtered);
   };
 
   if (loading && !refreshing) {
@@ -90,11 +106,11 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.filterContainer}>
-        <Text style={styles.filterLabel}>Filtrar por Status:</Text>
+        <Text style={styles.filterLabel}> Status:</Text>
         <Picker
           selectedValue={selectedStatus}
           style={styles.pickerFiltro}
-          onValueChange={(itemValue) => setSelectedStatus(itemValue)}
+          onValueChange={itemValue => setSelectedStatus(itemValue)}
           mode='dropdown'
         >
           <Picker.Item label="Todas" value="Todas" />
@@ -104,71 +120,60 @@ const TaskListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         </Picker>
       </View>
 
-      {filteredTasks.length === 0 ? (
-        <ScrollView refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={fetchTasks} />
-        }>
-          <Text style={styles.emptyMessage}>
-            Nenhuma tarefa encontrada para o status selecionado.
-          </Text>
-        </ScrollView>
-      ) : (
-        <FlatList
-          data={filteredTasks}
-          renderItem={({ item }) => (
-            <Card style={styles.card}>
-              <Card.Content>
-                <View style={styles.header}>
-                  <View style={styles.iconAndTextContainer}>
-                    {renderStatusIcon(item.status)}
-                    <Title style={styles.titleText}>{item.descricao}</Title>
-                  </View>
-                  <IconButton
-                    onPress={() => navigation.navigate('Detalhes da tarefa', { taskId: item.id })}
-                    disabled={item.status === 'Concluída'}
-                    icon={'square-edit-outline'}
-                    iconColor='#044c78'
-                    style={styles.editButton}
-                  />
-                </View>
-                <Paragraph style={styles.detailsText}>Criado por: {item.usuario.username}</Paragraph>
-                <Paragraph style={styles.detailsText}>Responsável: {item.responsavel.username}</Paragraph>
-              </Card.Content>
-              <Card.Actions>
-                {item.status !== 'Concluída' ? (
-                  <Picker
-                    selectedValue={item.status}
-                    style={styles.picker}
-                    onValueChange={(itemValue) => handleUpdateStatus(item.id, itemValue)}
-                    mode='dropdown'
-                  >
-                    <Picker.Item label="Não Iniciada" value="Não Iniciada" />
-                    <Picker.Item label="Em Andamento" value="Em Andamento" />
-                    <Picker.Item label="Concluída" value="Concluída" />
-                  </Picker>
-                ) : (
-                  <Text style={styles.completedText}>{item.status}</Text>
-                )}
-              </Card.Actions>
-            </Card>
-          )}
-          keyExtractor={(item) => item.id.toString()}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={fetchTasks} />
-          }
-        />
-      )}
+      <FlatList
+        data={filteredTasks}
+        renderItem={({ item }) => (
+          <Card style={styles.card}>
+            <Card.Content>
+              <View style={styles.header}>
+                <View style={styles.iconAndTextContainer}>
+                  <Title style={styles.titleText}>{item.title}</Title>
+                  <Text style={styles.detailsText}>
+                    Descrição: {item.descricao}</Text>
 
-      <Button
-        mode="contained"
-        onPress={() => navigation.navigate('Criar Tarefa')}
-        disabled={loading}
-        style={styles.createTaskButton}
-        icon={'plus-box-outline'}
-      >
-        {loading ? <ActivityIndicator color="#ffffff" /> : 'Criar Tarefa'}
-      </Button>
-    </View>
+                </View>
+                <IconButton
+                  onPress={() => navigation.navigate('Detalhes da tarefa', { taskId: item.id })}
+
+                  icon={'arrow-top-right-thin-circle-outline'}
+                  iconColor='#044c78'
+                  style={styles.editButton}
+                />
+              </View>
+              {/* <Paragraph style={styles.detailsText}>Criado por: {item.usuario.username}</Paragraph> */}
+              <Paragraph style={styles.detailsText}>Responsável: {item.responsavel.username}</Paragraph>
+            </Card.Content>
+            <Card.Actions>
+
+              <Text style={getCardStyle(item.status)}>
+                {item.status}
+              </Text>
+
+            </Card.Actions>
+          </Card >
+        )}
+        keyExtractor={(item) => item.id.toString()}
+        refreshControl={< RefreshControl refreshing={refreshing} onRefresh={fetchTasks} />}
+      />
+      {tasks.length == 0 ?
+        < Button
+          mode="contained"
+          onPress={() => navigation.navigate('Criar Tarefa')}
+          disabled={loading}
+          style={styles.createTaskButton}
+          icon={'plus-box-outline'}
+        >
+          {loading ? <ActivityIndicator color="#ffffff" /> : 'Criar Tarefa'}
+        </Button > :
+        <IconButton
+          onPress={() => navigation.navigate('Criar Tarefa')}
+          icon={'plus-box-outline'}
+          iconColor='#fff'
+          style={styles.createTaskIconButton}
+        />
+
+      }
+    </View >
   );
 };
 
@@ -186,21 +191,21 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   iconAndTextContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flex: 1,
     marginRight: 8,
   },
   titleText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginLeft: 8,
+    marginLeft: 0,
     flex: 1,
-    maxWidth: '80%',
+    color: '#333',
   },
   detailsText: {
     fontSize: 14,
-    color: '#555',
+    marginLeft: 5,
+    color: '#777',
   },
   editButton: {
     alignSelf: 'flex-end',
@@ -213,46 +218,71 @@ const styles = StyleSheet.create({
   filterContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    justifyContent: 'space-between',
+
+    marginBottom: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 5,
   },
   filterLabel: {
     fontSize: 16,
     fontWeight: 'bold',
     marginRight: 8,
+    marginLeft: 10,
+
+    color: '#333',
   },
   picker: {
     width: '80%',
     height: 50,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   pickerFiltro: {
-    width: '60%',
+    width: '80%',
     height: 50,
-    alignSelf: 'center'
-  },
-  emptyMessage: {
-    textAlign: 'center',
-    marginVertical: 20,
-    fontSize: 16,
-    color: '#888',
+    alignSelf: 'center',
   },
   card: {
     backgroundColor: '#ffffff',
-    borderRadius: 10,
+    borderRadius: 12,
     marginBottom: 20,
     marginHorizontal: 8,
-    padding: 10,
-    elevation: 1,
+    padding: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
   },
   completedText: {
-    color: '#28a745', // Cor verde para tarefas concluídas
+    color: '#28a745',
+    fontWeight: 'bold',
   },
   createTaskButton: {
-    backgroundColor: "#00be78",
+    backgroundColor: "#28a745",
     position: 'absolute',
     bottom: 16,
+    fontWeight: 'bold',
     right: 16,
     borderRadius: 50,
+    padding: 10,
+    elevation: 3,
+  },
+  createTaskIconButton: {
+    backgroundColor: "#28a745",
+    position: 'absolute',
+    bottom: 16,
+    fontWeight: 'bold',
+    right: 16,
+    borderRadius: 50,
+    elevation: 3,
   },
 });
 

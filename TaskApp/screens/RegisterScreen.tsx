@@ -4,23 +4,23 @@ import { TextInput, Button, Provider as PaperProvider, Title, Snackbar, Text } f
 import { registerUser } from '../api/api';
 
 
-import logo from '../images/logo_tech.png'; 
+import logo from '../images/logo_tech.png';
 
 const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [snackbarVisible, setSnackbarVisible] = useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = useState<string>('');
-  const [snackbarColor, setSnackbarColor] = useState<string>('#04c074'); 
+  const [snackbarColor, setSnackbarColor] = useState<string>('#04c074');
 
   const handleRegister = async () => {
     try {
       if (username && password) {
         await registerUser({ username, password });
-        setTimeout(() => navigation.navigate('Login'), 2000); 
+        setTimeout(() => navigation.navigate('Login'), 2000);
       } else {
         setSnackbarMessage('Usuário e senha são necessários');
-        setSnackbarColor('#B00020'); 
+        setSnackbarColor('#B00020');
         setSnackbarVisible(true);
       }
     } catch (error) {
@@ -31,14 +31,14 @@ const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   return (
     <PaperProvider>
       <View style={styles.container}>
-        <Image 
-          source={logo} 
-          style={styles.logo} 
-          resizeMode="contain" 
+        <Image
+          source={logo}
+          style={styles.logo}
+          resizeMode="contain"
         />
         <Title style={styles.title}>Registrar</Title>
         <Text style={styles.subtitle}>Crie sua conta para gerenciar suas tarefas.</Text>
-        
+
         <TextInput
           label="Usuário"
           value={username}
@@ -83,10 +83,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   logo: {
-    width: 150, 
-    height: 150, 
-    alignSelf: 'center', 
-    marginBottom: 16, 
+    width: 150,
+    height: 150,
+    alignSelf: 'center',
+    marginBottom: 16,
   },
   title: {
     textAlign: 'center',
@@ -98,9 +98,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 24,
     fontSize: 16,
-    color: '#555', 
+    color: '#555',
   },
   input: {
+    backgroundColor: '#fff',
     marginBottom: 12,
   },
   button: {
@@ -115,10 +116,10 @@ const styles = StyleSheet.create({
 
 const inputTheme = {
   colors: {
-    primary: '#044c78', 
-    placeholder: '#6200ee', 
+    primary: '#044c78',
+    placeholder: '#6200ee',
     text: '#000',
-    error: '#B00020', 
+    error: '#B00020',
   },
 };
 

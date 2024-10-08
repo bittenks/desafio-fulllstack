@@ -78,26 +78,50 @@ export class TaskService {
     const query = this.taskRepository.createQueryBuilder('task')
       .leftJoinAndSelect('task.responsavel', 'responsavel')
       .leftJoinAndSelect('task.usuario', 'usuario')
-      .where('task.usuarioId = :userId', { userId: usuario.id }); // Cláusula where para filtrar pelo usuário
+      .where('task.usuarioId = :userId OR task.responsavelId = :userId', { userId: usuario.id }); // Filtra pelo usuário ou responsável
 
     if (status) {
-      query.andWhere('task.status = :status', { status }); // Se um status for fornecido, filtra também por status
+      query.andWhere('task.status = :status', { status }); // Filtra por status se fornecido
     }
 
-    return query.getMany();
+    try {
+      return await query.getMany();
+    } catch (error) {
+      console.error('Error retrieving tasks:', error);
+      throw new Error('Error retrieving tasks');
+    }
   }
 
-  // Método para obter uma tarefa específica pelo ID
-  async getTaskById(id: number, usuario: User): Promise<Task> {
-    const task = await this.taskRepository.findOne({
-      where: { id },
-      relations: ['usuario', 'responsavel'], // Carrega os usuários associados
-    });
 
-    if (!task || task.usuario.id !== usuario.id) {
-      throw new BadRequestException('Tarefa não encontrada ou você não tem permissão para visualizá-la.');
+  async getTaskById(id: number, usuario: User): Promise<Task> {
+    if (!id || id <= 0) {
+      throw new BadRequestException('ID inválido fornecido.');
     }
 
-    return task; // Retorna a tarefa encontrada
+    try {
+      const task = await this.taskRepository.findOne({
+        where: { id },
+        relations: ['usuario', 'responsavel'], // Carrega os usuários associados
+      });
+
+      if (!task) {
+        throw new BadRequestException('Tarefa não encontrada.');
+      }
+
+      console.log('Tarefa encontrada:', task);
+      console.log('ID do usuário:', usuario.id);
+      console.log('ID do responsável:', task.responsavel?.id);
+      console.log('retornando task');
+
+      if (task.usuario.id !== usuario.id && task.responsavel?.id !== usuario.id) {
+        throw new BadRequestException('Você não tem permissão para visualizar esta tarefa.');
+      }
+      console.log('retornando task');
+
+      return task;
+    } catch (error) {
+      console.error('Erro ao carregar dados da tarefa:', error);
+      throw new BadRequestException('Falha ao carregar os dados.'); // Re-throwing the error
+    }
   }
 }
