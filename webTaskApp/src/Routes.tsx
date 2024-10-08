@@ -5,7 +5,6 @@ import { Register } from './components/Register';
 import Tasks from './components/Tasks';
 import NavBar from './components/Navbar';
 
-// Importando as telas
 
 const AppRoutes: React.FC = () => {
   return (
