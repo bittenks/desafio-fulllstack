@@ -93,7 +93,7 @@ As diferentes partes do projeto foram hospedadas na nuvem:
 
 - Node.js e npm/yarn
 - Expo CLI para a versão mobile
-
+- Lembre de trocar para localhost:3000 caso queira rodar localmente, atualmente esta utilizando a API hospedada na nuvem
 ### Backend
 
 1. Clone o repositório e navegue até a pasta backend:
@@ -105,6 +105,7 @@ As diferentes partes do projeto foram hospedadas na nuvem:
     ```sh
     npm install
     ```
+
 
 3. Inicie o servidor:
     ```sh
