@@ -4,11 +4,12 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { registerUser } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 export function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleRegister = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -21,7 +22,7 @@ export function Register() {
       });
       setUsername("");
       setPassword("");
-      <Navigate to="/" />
+      navigate("/login");
     } catch (error) {
       toast({
         title: "Erro",
