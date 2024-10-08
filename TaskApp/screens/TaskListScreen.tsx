@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#f5f5f5',
-    fontFamily: 'Geologica-Regular', 
+    fontFamily: 'Geologica', 
   },
   header: {
     flexDirection: 'row',
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 5,
     color: '#777',
-    fontFamily: 'Geologica-Regular', 
+    fontFamily: 'Geologica', 
   },
   editButton: {
     alignSelf: 'flex-end',
@@ -244,13 +244,13 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 50,
     alignSelf: 'center',
-    fontFamily: 'Geologica-Regular', 
+    fontFamily: 'Geologica', 
   },
   pickerFiltro: {
     width: '80%',
     height: 50,
     alignSelf: 'center',
-    fontFamily: 'Geologica-Regular', 
+    fontFamily: 'Geologica', 
   },
   card: {
     backgroundColor: '#ffffff',

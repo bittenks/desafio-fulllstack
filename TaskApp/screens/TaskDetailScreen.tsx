@@ -30,10 +30,10 @@ const TaskDetailScreen: React.FC<{ route: any; navigation: any }> = ({ route, na
           getUsers(),
         ]);
 
-        
+
         if (taskResponse) {
           setTask(taskResponse);
-          setResponsavel(taskResponse.responsavel?.id || ''); 
+          setResponsavel(taskResponse.responsavel?.id || '');
           setResponsavelName(taskResponse.responsavel?.username || '');
           setCriadoPor(taskResponse.usuario?.username || '');
           setStatusTask(taskResponse.status || '');
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 12,
     backgroundColor: '#f5f5f5',
-    fontFamily: 'Geologica-Regular', 
+    fontFamily: 'Geologica',
   },
   loadingContainer: {
     flex: 1,
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-    fontFamily: 'Geologica-Regular', 
+    fontFamily: 'Geologica',
   },
   card: {
     padding: 16,
@@ -280,37 +280,37 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontFamily: 'Geologica-Bold', 
-    fontWeight: 'bold', 
+    fontFamily: 'Geologica-Bold',
+    fontWeight: 'bold',
   },
   label: {
     fontSize: 16,
-    fontFamily: 'Geologica-Bold', 
-    fontWeight: 'bold', 
+    fontFamily: 'Geologica-Bold',
+    fontWeight: 'bold',
     marginTop: 12,
   },
   valueText: {
     fontSize: 16,
-    fontFamily: 'Geologica-Regular', 
+    fontFamily: 'Geologica',
     marginBottom: 10,
   },
   labelTitle: {
     fontSize: 18,
-    fontFamily: 'Geologica-Bold', 
-    fontWeight: 'bold', 
+    fontFamily: 'Geologica-Bold',
+    fontWeight: 'bold',
     marginTop: 8,
   },
   input: {
     marginBottom: 16,
     backgroundColor: '#fff',
-    fontFamily: 'Geologica-Regular', 
+    fontFamily: 'Geologica',
   },
   picker: {
     height: 50,
     width: '100%',
     borderRadius: 50,
     marginBottom: 12,
-    fontFamily: 'Geologica-Regular', 
+    fontFamily: 'Geologica',
   },
   updateButton: {
     marginTop: 20,
